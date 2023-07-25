@@ -6,6 +6,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -28,10 +30,10 @@ public class User extends BaseEntity {
     @Column
     private String name;
 
-    @Column(name = "profile_image")
+    @Column
     private String profileImage;
 
-    @Column
+    @Column(name = "oauth")
     @Enumerated(value = EnumType.STRING)
     private LoginWith oAuth;
 
@@ -39,6 +41,10 @@ public class User extends BaseEntity {
     @Builder.Default
     private int ticket = 0;
 
-    @Column(name = "meeting_url", nullable = false)
+    @Column(nullable = false)
     private String meetingUrl;
+
+    @OneToMany(mappedBy = "user")
+    @Builder.Default
+    private List<TeamParticipant> teamParticipantList = new ArrayList<>();
 }
