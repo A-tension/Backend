@@ -19,9 +19,8 @@ import java.util.UUID;
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Type(type = "uuid-char")
-    @Column(name = "user_id")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "user_id", columnDefinition = "BINARY(16)")
     private UUID id;
 
     @Column(nullable = false)

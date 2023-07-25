@@ -21,7 +21,7 @@ public class Plan extends BaseEntity {
     @Column(name = "plan_id")
     private Long id;
 
-    @Column
+    @Column(columnDefinition = "BINARY(16)")
     private UUID userId;
 
     @Column
