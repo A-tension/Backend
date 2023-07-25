@@ -1,5 +1,6 @@
 package com.b5f1.atention.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,4 +26,8 @@ public class Image extends BaseEntity {
     @Column(nullable = false)
     private String url;
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id", nullable = false)
+    private Team team;
 }

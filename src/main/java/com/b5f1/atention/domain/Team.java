@@ -30,4 +30,8 @@ public class Team extends BaseEntity {
     @Builder.Default
     private List<TeamParticipant> teamParticipantList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "team")
+    @Builder.Default
+    private List<Image> imageList = new ArrayList<>();
+
 }
