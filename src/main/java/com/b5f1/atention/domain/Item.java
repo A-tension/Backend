@@ -3,6 +3,8 @@ package com.b5f1.atention.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -23,4 +25,8 @@ public class Item extends BaseEntity {
 
     @Column
     private String description;
+
+    @OneToMany(mappedBy = "item")
+    @Builder.Default
+    private List<MyItem> myItemList = new ArrayList<>();
 }

@@ -46,4 +46,8 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     @Builder.Default
     private List<TeamParticipant> teamParticipantList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    @Builder.Default
+    private List<MyItem> myItemList = new ArrayList<>();
 }
