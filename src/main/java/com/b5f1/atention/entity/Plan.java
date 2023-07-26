@@ -25,7 +25,7 @@ public class Plan extends BaseEntity {
     private UUID userId;
 
     @Column
-    private Long groupId;
+    private Long teamId;
 
     @Column
     private String name;
