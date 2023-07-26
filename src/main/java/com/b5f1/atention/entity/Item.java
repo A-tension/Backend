@@ -1,4 +1,4 @@
-package com.b5f1.atention.domain;
+package com.b5f1.atention.entity;
 
 import lombok.*;
 

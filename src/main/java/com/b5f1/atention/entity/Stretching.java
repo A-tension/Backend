@@ -1,6 +1,5 @@
-package com.b5f1.atention.domain;
+package com.b5f1.atention.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,16 +7,16 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Getter
 @Entity
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Image extends BaseEntity {
+public class Stretching {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "iamge_id")
+    @Column(name = "stretching_id")
     private Long id;
 
     @Column
@@ -26,8 +25,4 @@ public class Image extends BaseEntity {
     @Column(nullable = false)
     private String url;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id", nullable = false)
-    private Team team;
 }

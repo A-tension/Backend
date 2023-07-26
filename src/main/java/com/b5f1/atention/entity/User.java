@@ -1,9 +1,8 @@
-package com.b5f1.atention.domain;
+package com.b5f1.atention.entity;
 
-import com.b5f1.atention.enums.LoginWith;
+import com.b5f1.atention.entity.enums.LoginWith;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.ArrayList;

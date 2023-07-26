@@ -1,8 +1,5 @@
-package com.b5f1.atention.domain;
+package com.b5f1.atention.entity;
 
-import com.b5f1.atention.domain.BaseEntity;
-import com.b5f1.atention.domain.Item;
-import com.b5f1.atention.domain.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
