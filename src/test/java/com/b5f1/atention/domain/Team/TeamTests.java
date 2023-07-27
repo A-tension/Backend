@@ -1,6 +1,7 @@
 package com.b5f1.atention.domain.Team;
 
 import com.b5f1.atention.domain.team.dto.TeamCreateRequestDto;
+import com.b5f1.atention.domain.team.dto.TeamResponseDto;
 import com.b5f1.atention.domain.team.repository.TeamInvitationRepository;
 import com.b5f1.atention.domain.team.repository.TeamParticipantRepository;
 import com.b5f1.atention.domain.team.repository.TeamRepository;
@@ -24,6 +25,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.*;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
@@ -45,47 +48,57 @@ public class TeamTests {
     @Autowired
     private UserRepository userRepository;
 
+    @Test
+    public void findMyTeamTest() throws Exception {
+        //given
+        createTeamTest();
+        User user = userRepository.findByEmail("testUser")
+                .orElseThrow();
+
+        //when
+        List<TeamResponseDto> myTeamList = teamService.findMyTeamList(user.getId());
+
+        //then
+        assertThat(myTeamList.get(0).getTeamId()).isEqualTo(teamRepository.findByName("testTeam").orElseThrow().getId());
+
+    }
+
     // 팀 새로 생성 후 초대 테스트
     @Test
-    public void createTeamTest() throws Exception{
+    public void createTeamTest() throws Exception {
         //given
         User hostUser = User.builder()
-                .email("hostUser")
+                .email("testUser")
                 .meetingUrl("test")
                 .build();
         userRepository.saveAndFlush(hostUser);
 
+        List<UUID> userIdList = new ArrayList<>();
         User invitedUser1 = User.builder()
                 .email("invitedUser")
                 .meetingUrl("test")
                 .build();
-        userRepository.saveAndFlush(invitedUser1);
+        userIdList.add(userRepository.saveAndFlush(invitedUser1).getId());
 
         User invitedUser2 = User.builder()
                 .email("invitedUser")
                 .meetingUrl("test")
                 .build();
-        userRepository.saveAndFlush(invitedUser2);
-
-        List<User> userList = userRepository.findAllByEmail("invitedUser");
-        List<UUID> userIdList = new ArrayList<>();
-        for (User user : userList) {
-            userIdList.add(user.getId());
-        }
+        userIdList.add(userRepository.saveAndFlush(invitedUser2).getId());
 
         TeamCreateRequestDto teamCreateRequestDto = TeamCreateRequestDto.builder()
                 .userIdList(userIdList)
-                .name("TestName")
+                .name("testTeam")
                 .build();
 
         //when
-        User user = userRepository.findByEmail("hostUser")
+        User user = userRepository.findByEmail("testUser")
                 .orElseThrow(() -> new ArithmeticException("유저를 찾을 수 없습니다"));
         Team createdTeam = teamService.createTeam(user.getId(), teamCreateRequestDto);
         teamService.inviteUser(createdTeam, teamCreateRequestDto);
 
         //then
         Optional<TeamParticipant> teamParticipant = teamParticipantRepository.findByUser(hostUser);
-        Assertions.assertThat(teamParticipant).isNotEqualTo(Optional.empty());
+        assertThat(teamParticipant).isNotEqualTo(Optional.empty());
     }
 }

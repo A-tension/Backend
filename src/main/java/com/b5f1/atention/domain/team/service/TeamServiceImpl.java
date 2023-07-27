@@ -14,7 +14,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,8 +29,20 @@ public class TeamServiceImpl implements TeamService {
     private final UserRepository userRepository;
 
     // userRepository 필요 -> 보류
-    public List<TeamResponseDto> findMyTeamList() {
-        return null;
+    public List<TeamResponseDto> findMyTeamList(UUID userId) {
+        User user = findUserById(userId);
+
+        // 유저와 연관관계가 있는 팀 참여자 List 얻기
+        List<TeamParticipant> teamParticipantList = user.getTeamParticipantList();
+
+        // TeamResponseDto 변환
+        List<TeamResponseDto> teamResponseDtoList = new ArrayList<>();
+        for (TeamParticipant teamParticipant : teamParticipantList) {
+            TeamResponseDto teamResponseDto = new TeamResponseDto().toTeamResponseDto(teamParticipant.getTeam());
+            teamResponseDtoList.add(teamResponseDto);
+        }
+
+        return teamResponseDtoList;
     }
 
     /**
@@ -44,8 +58,7 @@ public class TeamServiceImpl implements TeamService {
         teamRepository.save(team);
 
         // 그룹을 생성한 유저 기준으로 TeamParticipant 생성
-        User hostUser = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당하는 유저가 없습니다."));
+        User hostUser = findUserById(userId);
         teamParticipantRepository.save(new TeamParticipant().createTeamParticipant(hostUser, team, true));
 
         return team;
@@ -67,5 +80,13 @@ public class TeamServiceImpl implements TeamService {
         }
     }
 
+    // 아래는 서비스 내부 로직
+
+    // userId로 유저를 찾고, 없으면 throw Exception
+    // 추후에 Exception 변경 예정
+    public User findUserById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("해당하는 유저를 찾을 수 없습니다"));
+    }
 
 }
