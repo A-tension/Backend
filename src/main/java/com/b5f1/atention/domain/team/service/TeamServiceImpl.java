@@ -28,7 +28,11 @@ public class TeamServiceImpl implements TeamService {
     private final TeamInvitationRepository teamInvitationRepository;
     private final UserRepository userRepository;
 
-    // userRepository 필요 -> 보류
+    /**
+     *
+     * @param userId
+     * @return TeamResponseDto
+     */
     public List<TeamResponseDto> findMyTeamList(UUID userId) {
         User user = findUserById(userId);
 
@@ -79,6 +83,8 @@ public class TeamServiceImpl implements TeamService {
             teamInvitationRepository.save(teamInvitation);
         }
     }
+
+
 
     // 아래는 서비스 내부 로직
 
