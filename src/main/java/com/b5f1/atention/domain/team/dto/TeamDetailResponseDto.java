@@ -2,10 +2,7 @@ package com.b5f1.atention.domain.team.dto;
 
 import com.b5f1.atention.entity.Team;
 import com.b5f1.atention.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class TeamDetailResponseDto {
 
     // 팀 고유 식별값

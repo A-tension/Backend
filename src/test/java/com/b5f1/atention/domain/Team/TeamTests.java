@@ -101,4 +101,17 @@ public class TeamTests {
         Optional<TeamParticipant> teamParticipant = teamParticipantRepository.findByUser(hostUser);
         assertThat(teamParticipant).isNotEqualTo(Optional.empty());
     }
+
+    @Test
+    public void getTeamDetailTest() throws Exception{
+        //given
+        createTeamTest();
+
+        // when
+        Long teamId = teamRepository.findByName("testTeam").orElseThrow().getId();
+
+        // then
+        System.out.println(teamService.getTeamDetail(teamId));
+
+    }
 }
