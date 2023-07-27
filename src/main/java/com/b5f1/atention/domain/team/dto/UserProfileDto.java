@@ -1,8 +1,17 @@
 package com.b5f1.atention.domain.team.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
 // 추후에 이동 예정
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserProfileDto {
 
     // 유저 고유 식별값

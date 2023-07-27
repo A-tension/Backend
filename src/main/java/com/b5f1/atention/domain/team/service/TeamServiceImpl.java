@@ -1,6 +1,7 @@
 package com.b5f1.atention.domain.team.service;
 
 import com.b5f1.atention.domain.team.dto.TeamCreateRequestDto;
+import com.b5f1.atention.domain.team.dto.TeamDetailResponseDto;
 import com.b5f1.atention.domain.team.dto.TeamResponseDto;
 import com.b5f1.atention.domain.team.repository.TeamInvitationRepository;
 import com.b5f1.atention.domain.team.repository.TeamParticipantRepository;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -84,6 +84,20 @@ public class TeamServiceImpl implements TeamService {
         }
     }
 
+    /**
+     * teamId를 통해 Team 정보와 참여한 User 정보를 return
+     * @param teamId
+     * @return teamDetailResponseDto
+     */
+    public TeamDetailResponseDto getTeamDetail(Long teamId) {
+        Team team = findTeamById(teamId);
+        List<TeamParticipant> teamParticipantList = team.getTeamParticipantList();
+        TeamDetailResponseDto teamDetailResponseDto = new TeamDetailResponseDto().toTeamDetailResponseDto(team);
+        for (TeamParticipant teamParticipant : teamParticipantList) {
+            teamDetailResponseDto.addUserProfileDto(teamParticipant.getUser());
+        }
+        return teamDetailResponseDto;
+    }
 
 
     // 아래는 서비스 내부 로직
@@ -95,4 +109,9 @@ public class TeamServiceImpl implements TeamService {
                 .orElseThrow(() -> new RuntimeException("해당하는 유저를 찾을 수 없습니다"));
     }
 
+    // teamId로 팀을 찾고, 없으면 throw Exception
+    public Team findTeamById(Long teamId) {
+        return teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException("해당하는 유저를 찾을 수 없습니다"));
+    }
 }
