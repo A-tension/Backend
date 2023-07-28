@@ -3,6 +3,7 @@ package com.b5f1.atention.domain.team.service;
 import com.b5f1.atention.domain.team.dto.TeamCreateRequestDto;
 import com.b5f1.atention.domain.team.dto.TeamDetailResponseDto;
 import com.b5f1.atention.domain.team.dto.TeamResponseDto;
+import com.b5f1.atention.domain.team.dto.TeamUpdateRequestDto;
 import com.b5f1.atention.entity.Team;
 import com.b5f1.atention.entity.User;
 
@@ -16,6 +17,7 @@ public interface TeamService {
     public void inviteUser(Team team, TeamCreateRequestDto teamCreateRequestDto);
     public TeamDetailResponseDto getTeamDetail(Long teamId);
 
+    public TeamUpdateRequestDto updateTeam(UUID userId, Long teamId, TeamUpdateRequestDto teamUpdateRequestDto);
 
 
     public User findUserById(UUID userId);

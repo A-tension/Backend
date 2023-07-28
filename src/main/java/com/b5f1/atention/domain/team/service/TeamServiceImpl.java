@@ -3,6 +3,7 @@ package com.b5f1.atention.domain.team.service;
 import com.b5f1.atention.domain.team.dto.TeamCreateRequestDto;
 import com.b5f1.atention.domain.team.dto.TeamDetailResponseDto;
 import com.b5f1.atention.domain.team.dto.TeamResponseDto;
+import com.b5f1.atention.domain.team.dto.TeamUpdateRequestDto;
 import com.b5f1.atention.domain.team.repository.TeamInvitationRepository;
 import com.b5f1.atention.domain.team.repository.TeamParticipantRepository;
 import com.b5f1.atention.domain.team.repository.TeamRepository;
@@ -97,6 +98,29 @@ public class TeamServiceImpl implements TeamService {
             teamDetailResponseDto.addUserProfileDto(teamParticipant.getUser());
         }
         return teamDetailResponseDto;
+    }
+
+    /**
+     * 팀 세부 정보를 수정하는 DTO를 받아 성공하면 그대로 변경된 값을 전달
+     * @param teamUpdateRequestDto
+     * @return teamUpdateRequestDto
+     */
+    public TeamUpdateRequestDto updateTeam(UUID userId, Long teamId, TeamUpdateRequestDto teamUpdateRequestDto) {
+        Team team = findTeamById(teamId);
+        User user = findUserById(userId);
+
+        // 유저가 팀에 속하지 않는 경우
+        TeamParticipant teamParticipant = teamParticipantRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("팀에 속한 유저가 아닙니다."));
+
+        // 유저가 팀을 변경할 권한이 없는 경우
+        if (!teamParticipant.isHasAuthority()) {
+            throw new RuntimeException("팀을 변경할 권한이 없습니다.");
+        }
+        teamRepository.save(team.updateTeam(teamUpdateRequestDto));
+
+        // 실제 DB 값을 가져올건지 생각해볼 것
+        return teamUpdateRequestDto;
     }
 
 
