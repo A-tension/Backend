@@ -117,10 +117,19 @@ public class TeamServiceImpl implements TeamService {
         if (!teamParticipant.isHasAuthority()) {
             throw new RuntimeException("팀을 변경할 권한이 없습니다.");
         }
-        teamRepository.save(team.updateTeam(teamUpdateRequestDto));
 
-        // 실제 DB 값을 가져올건지 생각해볼 것
-        return teamUpdateRequestDto;
+        // 실제 DB 값을 가져올건지, 그대로 전달할건지 생각해볼 것
+//        teamRepository.save(team.updateTeam(teamUpdateRequestDto));
+//        return teamUpdateRequestDto;
+
+        team = teamRepository.save(team.updateTeam(teamUpdateRequestDto));
+        return TeamUpdateRequestDto
+                .builder()
+                .name(team.getName())
+                .profileImage(team.getProfileImage())
+                .description(team.getDescription())
+                .build();
+
     }
 
 

@@ -2,6 +2,7 @@ package com.b5f1.atention.domain.Team;
 
 import com.b5f1.atention.domain.team.dto.TeamCreateRequestDto;
 import com.b5f1.atention.domain.team.dto.TeamResponseDto;
+import com.b5f1.atention.domain.team.dto.TeamUpdateRequestDto;
 import com.b5f1.atention.domain.team.repository.TeamInvitationRepository;
 import com.b5f1.atention.domain.team.repository.TeamParticipantRepository;
 import com.b5f1.atention.domain.team.repository.TeamRepository;
@@ -113,5 +114,25 @@ public class TeamTests {
         // then
         System.out.println(teamService.getTeamDetail(teamId));
 
+    }
+
+    @Test
+    public void updateTeamTest() throws Exception{
+        //given
+        createTeamTest();
+        User user = userRepository.findByEmail("testUser").orElseThrow();
+        Team team = teamRepository.findByName("testTeam").orElseThrow();
+
+        TeamUpdateRequestDto teamUpdateRequestDto = TeamUpdateRequestDto.builder()
+                .name("updateTest")
+                .profileImage("updateTest")
+                .description("updateTest")
+                .build();
+
+        //when
+        TeamUpdateRequestDto teamUpdateResponseDto = teamService.updateTeam(user.getId(), team.getId(), teamUpdateRequestDto);
+
+        //then
+        assertThat(teamUpdateRequestDto.getName()).isEqualTo(teamUpdateResponseDto.getName());
     }
 }
