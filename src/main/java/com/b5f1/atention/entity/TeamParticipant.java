@@ -33,4 +33,21 @@ public class TeamParticipant extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = false)
     private Team team;
+
+
+    /**
+     * 새 TeamParticipant 객체의 필드 세팅 후 연관되어있는 필드에 더해줌
+     * @param user
+     * @param team
+     * @param hasAuthority
+     * @return TeamParticipant
+     */
+    public TeamParticipant createTeamParticipant(User user, Team team, boolean hasAuthority) {
+        this.user = user;
+        this.team = team;
+        this.hasAuthority = hasAuthority;
+        user.getTeamParticipantList().add(this);
+        team.getTeamParticipantList().add(this);
+        return this;
+    }
 }
