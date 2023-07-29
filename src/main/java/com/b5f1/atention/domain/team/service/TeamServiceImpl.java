@@ -77,6 +77,9 @@ public class TeamServiceImpl implements TeamService {
     public void inviteUser(Team team, TeamCreateRequestDto teamCreateRequestDto) {
         List<User> userList = userRepository.findAllById(teamCreateRequestDto.getUserIdList());
         for (User invitedUser : userList) {
+            if (invitedUser.isDeleted()) {
+                continue;
+            }
             TeamInvitation teamInvitation = TeamInvitation.builder()
                     .teamId(team.getId())
                     .userId(invitedUser.getId())
@@ -110,7 +113,7 @@ public class TeamServiceImpl implements TeamService {
         User user = findUserById(userId);
 
         // 유저가 팀에 속하지 않는 경우
-        TeamParticipant teamParticipant = teamParticipantRepository.findByUser(user)
+        TeamParticipant teamParticipant = teamParticipantRepository.findByUserAndDeletedFalse(user)
                 .orElseThrow(() -> new RuntimeException("팀에 속한 유저가 아닙니다."));
 
         // 유저가 팀을 변경할 권한이 없는 경우
@@ -138,13 +141,13 @@ public class TeamServiceImpl implements TeamService {
     // userId로 유저를 찾고, 없으면 throw Exception
     // 추후에 Exception 변경 예정
     public User findUserById(UUID userId) {
-        return userRepository.findById(userId)
+        return userRepository.findByIdAndDeletedFalse(userId)
                 .orElseThrow(() -> new RuntimeException("해당하는 유저를 찾을 수 없습니다"));
     }
 
     // teamId로 팀을 찾고, 없으면 throw Exception
     public Team findTeamById(Long teamId) {
-        return teamRepository.findById(teamId)
+        return teamRepository.findByIdAndDeletedFalse(teamId)
                 .orElseThrow(() -> new RuntimeException("해당하는 유저를 찾을 수 없습니다"));
     }
 }

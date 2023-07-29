@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface TeamParticipantRepository extends JpaRepository<TeamParticipant, Long> {
 
     Optional<TeamParticipant> findByUser(User user);
+
+    Optional<TeamParticipant> findByUserAndDeletedFalse(User user);
 }
