@@ -52,7 +52,7 @@ public class PlanServiceImpl implements PlanService{
     }
 
     /**
-     * 일정 생성 후 DTO 로 변환하고 반환는 메서드
+     * 일정 생성 후 DTO 로 변환하고 반환하는 메서드
      * @param  planRequestDto
      * @return savedPlan
      */
