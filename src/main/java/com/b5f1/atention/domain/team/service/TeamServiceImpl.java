@@ -139,6 +139,7 @@ public class TeamServiceImpl implements TeamService {
         Team team = findTeamById(teamId);
         team.deleted();
         teamRepository.saveAndFlush(team);
+
     }
 
 
