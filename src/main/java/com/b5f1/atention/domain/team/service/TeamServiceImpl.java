@@ -144,6 +144,18 @@ public class TeamServiceImpl implements TeamService {
         }
     }
 
+    public void acceptTeam(UUID userId, Long teamId) {
+        TeamInvitation teamInvitation = findTeamInvitationByUserIdAndTeamId(userId, teamId);
+
+        TeamParticipant teamParticipant = TeamParticipant.builder()
+                .user(findUserById(userId))
+                .team(findTeamById(teamId))
+                .build();
+        teamParticipantRepository.save(teamParticipant);
+        teamInvitationRepository.delete(teamInvitation);
+
+    }
+
 
     // 아래는 서비스 내부 로직
 
@@ -158,5 +170,10 @@ public class TeamServiceImpl implements TeamService {
     public Team findTeamById(Long teamId) {
         return teamRepository.findByIdAndIsDeletedFalse(teamId)
                 .orElseThrow(() -> new RuntimeException("해당하는 팀을 찾을 수 없습니다"));
+    }
+
+    public TeamInvitation findTeamInvitationByUserIdAndTeamId(UUID userId, Long teamId) {
+        return teamInvitationRepository.findByUserIdAndTeamIdAndIsDeleteFalse(userId, teamId)
+                .orElseThrow(() -> new RuntimeException("해당 팀에 초대되지 않았습니다."));
     }
 }
