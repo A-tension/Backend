@@ -7,5 +7,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TeamInvitationRepository extends JpaRepository<TeamInvitation, Long> {
-    Optional<TeamInvitation> findByUserIdAndTeamIdAndIsDeleteFalse(UUID userId, Long teamId);
+    Optional<TeamInvitation> findByUserIdAndTeamId(UUID userId, Long teamId);
 }

@@ -76,13 +76,13 @@ public class TeamTests {
 
         List<UUID> userIdList = new ArrayList<>();
         User invitedUser1 = User.builder()
-                .email("invitedUser")
+                .email("invitedUser1")
                 .meetingUrl("test")
                 .build();
         userIdList.add(userRepository.saveAndFlush(invitedUser1).getId());
 
         User invitedUser2 = User.builder()
-                .email("invitedUser")
+                .email("invitedUser2")
                 .meetingUrl("test")
                 .build();
         userIdList.add(userRepository.saveAndFlush(invitedUser2).getId());
@@ -150,16 +150,20 @@ public class TeamTests {
     }
 
     @Test
-    public void inviteTeam() throws Exception{
+    public void acceptTeam() throws Exception{
         //given
-    //  Member member = new Member();
-    //  member.setUsername("memberA");
+        createTeamTest();
+        Team team = teamRepository.findByName("testTeam").orElseThrow();
+        User user = userRepository.findByEmail("invitedUser1").orElseThrow();
 
         //when
-    //  Long saveId = memberRepository.save(member);
-    //  Member findMember = memberRepository.find(saveId);
+        teamService.acceptTeam(user.getId(), team.getId());
 
         //then
-    //  Assertions.assertThat(findMember.getId()).isEqualTo(member.getId());
+        TeamParticipant teamParticipant = teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(user, team)
+                .orElseThrow();
+
+        assertThat(teamParticipant.getUser().getId()).isEqualTo(user.getId());
+
     }
 }

@@ -173,7 +173,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     public TeamInvitation findTeamInvitationByUserIdAndTeamId(UUID userId, Long teamId) {
-        return teamInvitationRepository.findByUserIdAndTeamIdAndIsDeleteFalse(userId, teamId)
+        return teamInvitationRepository.findByUserIdAndTeamId(userId, teamId)
                 .orElseThrow(() -> new RuntimeException("해당 팀에 초대되지 않았습니다."));
     }
 }
