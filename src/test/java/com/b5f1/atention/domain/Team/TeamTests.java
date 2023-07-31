@@ -148,4 +148,18 @@ public class TeamTests {
         //then
         assertThat(team.getIsDeleted()).isEqualTo(true);
     }
+
+    @Test
+    public void inviteTeam() throws Exception{
+        //given
+    //  Member member = new Member();
+    //  member.setUsername("memberA");
+
+        //when
+    //  Long saveId = memberRepository.save(member);
+    //  Member findMember = memberRepository.find(saveId);
+
+        //then
+    //  Assertions.assertThat(findMember.getId()).isEqualTo(member.getId());
+    }
 }

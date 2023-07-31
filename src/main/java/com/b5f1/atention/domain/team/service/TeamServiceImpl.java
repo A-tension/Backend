@@ -72,17 +72,12 @@ public class TeamServiceImpl implements TeamService {
      * @param teamCreateRequestDto
      */
     public void inviteUser(Team team, TeamCreateRequestDto teamCreateRequestDto) {
-        List<User> userList = userRepository.findAllById(teamCreateRequestDto.getUserIdList());
-        for (User invitedUser : userList) {
-            if (invitedUser.getIsDeleted()) {
-                continue;
-            }
-            TeamInvitation teamInvitation = TeamInvitation.builder()
-                    .teamId(team.getId())
-                    .userId(invitedUser.getId())
-                    .build();
-            teamInvitationRepository.save(teamInvitation);
-        }
+
+        TeamInviteRequestDto teamInviteRequestDto = TeamInviteRequestDto.builder()
+                .teamId(team.getId())
+                .userIdList(teamCreateRequestDto.getUserIdList())
+                .build();
+        inviteTeam(teamInviteRequestDto);
     }
 
     /**
