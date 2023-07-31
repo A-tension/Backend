@@ -1,8 +1,6 @@
 package com.b5f1.atention.domain.Team;
 
-import com.b5f1.atention.domain.team.dto.TeamCreateRequestDto;
-import com.b5f1.atention.domain.team.dto.TeamResponseDto;
-import com.b5f1.atention.domain.team.dto.TeamUpdateRequestDto;
+import com.b5f1.atention.domain.team.dto.*;
 import com.b5f1.atention.domain.team.repository.TeamInvitationRepository;
 import com.b5f1.atention.domain.team.repository.TeamParticipantRepository;
 import com.b5f1.atention.domain.team.repository.TeamRepository;
@@ -104,7 +102,7 @@ public class TeamTests {
     }
 
     @Test
-    public void getTeamDetailTest() throws Exception{
+    public void getTeamDetailTest() throws Exception {
         //given
         createTeamTest();
 
@@ -117,7 +115,7 @@ public class TeamTests {
     }
 
     @Test
-    public void updateTeamTest() throws Exception{
+    public void updateTeamTest() throws Exception {
         //given
         createTeamTest();
         User user = userRepository.findByEmail("testUser").orElseThrow();
@@ -137,7 +135,7 @@ public class TeamTests {
     }
 
     @Test
-    public void deleteTeamTest() throws Exception{
+    public void deleteTeamTest() throws Exception {
         //given
         createTeamTest();
         Team team = teamRepository.findByName("testTeam").orElseThrow();
@@ -150,7 +148,7 @@ public class TeamTests {
     }
 
     @Test
-    public void acceptTeam() throws Exception{
+    public void acceptTeam() throws Exception {
         //given
         createTeamTest();
         Team team = teamRepository.findByName("testTeam").orElseThrow();
@@ -168,7 +166,7 @@ public class TeamTests {
     }
 
     @Test
-    public void leaveTeamTest() throws Exception{
+    public void leaveTeamTest() throws Exception {
         //given
         createTeamTest();
         User user = userRepository.findByEmail("testUser").orElseThrow();
@@ -180,5 +178,33 @@ public class TeamTests {
         //then
         Optional<TeamParticipant> teamParticipant = teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(user, team);
         assertThat(teamParticipant).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    public void updateTeamParticipantAuthorityTest() throws Exception {
+        //given
+        acceptTeam();
+        User user = userRepository.findByEmail("invitedUser1").orElseThrow();
+        Team team = teamRepository.findByName("testTeam").orElseThrow();
+        UserAuthDto userAuthDto = UserAuthDto.builder()
+                .userId(user.getId())
+                .hasAuthority(true)
+                .build();
+        List<UserAuthDto> userAuthDtoList = new ArrayList<>();
+        userAuthDtoList.add(userAuthDto);
+
+        TeamParticipantAuthorityDto teamParticipantAuthorityDto = new TeamParticipantAuthorityDto().builder()
+                .teamId(team.getId())
+                .userAuthDtoList(userAuthDtoList)
+                .build();
+        //when
+        teamService.updateTeamParticipantAuthority(teamParticipantAuthorityDto);
+
+        //then
+
+        TeamParticipant teamParticipant = teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(user, team)
+                .orElseThrow();
+        assertThat(teamParticipant.getHasAuthority()).isEqualTo(true);
+
     }
 }
