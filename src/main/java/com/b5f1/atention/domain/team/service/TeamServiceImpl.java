@@ -166,7 +166,10 @@ public class TeamServiceImpl implements TeamService {
     }
 
     public void updateTeamParticipantAuthority(TeamParticipantAuthorityDto teamParticipantAuthorityDto) {
-
+        for (UserAuthDto userAuthDto : teamParticipantAuthorityDto.getUserAuthDtoList()) {
+            TeamParticipant teamParticipant = findTeamParticipantByUserAndTeam(userAuthDto.getUserId(), teamParticipantAuthorityDto.getTeamId());
+            teamParticipantRepository.save(teamParticipant.updateAuthority(userAuthDto.getHasAuthority()));
+        }
     }
 
 
