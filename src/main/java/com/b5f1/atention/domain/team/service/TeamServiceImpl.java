@@ -1,9 +1,6 @@
 package com.b5f1.atention.domain.team.service;
 
-import com.b5f1.atention.domain.team.dto.TeamCreateRequestDto;
-import com.b5f1.atention.domain.team.dto.TeamDetailResponseDto;
-import com.b5f1.atention.domain.team.dto.TeamResponseDto;
-import com.b5f1.atention.domain.team.dto.TeamUpdateRequestDto;
+import com.b5f1.atention.domain.team.dto.*;
 import com.b5f1.atention.domain.team.repository.TeamInvitationRepository;
 import com.b5f1.atention.domain.team.repository.TeamParticipantRepository;
 import com.b5f1.atention.domain.team.repository.TeamRepository;
@@ -140,6 +137,16 @@ public class TeamServiceImpl implements TeamService {
         team.deleted();
         teamRepository.saveAndFlush(team);
 
+    }
+
+    public void inviteTeam(TeamInviteRequestDto teamInviteRequestDto) {
+        for (UUID userId : teamInviteRequestDto.getUserIdList()) {
+            TeamInvitation teamInvitation = TeamInvitation.builder()
+                    .teamId(teamInviteRequestDto.getTeamId())
+                    .userId(userId)
+                    .build();
+            teamInvitationRepository.save(teamInvitation);
+        }
     }
 
 
