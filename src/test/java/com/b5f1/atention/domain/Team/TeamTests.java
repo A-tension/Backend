@@ -166,4 +166,19 @@ public class TeamTests {
         assertThat(teamParticipant.getUser().getId()).isEqualTo(user.getId());
 
     }
+
+    @Test
+    public void leaveTeamTest() throws Exception{
+        //given
+        createTeamTest();
+        User user = userRepository.findByEmail("testUser").orElseThrow();
+        Team team = teamRepository.findByName("testTeam").orElseThrow();
+        //when
+
+        teamService.leaveTeam(user.getId(), team.getId());
+
+        //then
+        Optional<TeamParticipant> teamParticipant = teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(user, team);
+        assertThat(teamParticipant).isEqualTo(Optional.empty());
+    }
 }
