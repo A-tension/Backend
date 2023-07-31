@@ -71,13 +71,13 @@ public class TeamServiceImpl implements TeamService {
      * @param team
      * @param teamCreateRequestDto
      */
-    public void inviteUser(Team team, TeamCreateRequestDto teamCreateRequestDto) {
+    public void inviteUser(UUID userId, Team team, TeamCreateRequestDto teamCreateRequestDto) {
 
         TeamInviteRequestDto teamInviteRequestDto = TeamInviteRequestDto.builder()
                 .teamId(team.getId())
                 .userIdList(teamCreateRequestDto.getUserIdList())
                 .build();
-        inviteTeam(teamInviteRequestDto);
+        inviteTeam(userId, teamInviteRequestDto);
     }
 
     /**
@@ -127,23 +127,50 @@ public class TeamServiceImpl implements TeamService {
 
     }
 
-    public void deleteTeam(Long teamId) {
+    /**
+     * 권한을 확인하고, 팀을 삭제하는 메서드
+     * @param userId
+     * @param teamId
+     */
+    public void deleteTeam(UUID userId, Long teamId) {
+        TeamParticipant teamParticipant = findTeamParticipantByUserIdAndTeamId(userId, teamId);
+
+        if (!teamParticipant.getHasAuthority()) {
+            throw new RuntimeException("팀 삭제 권한이 없습니다.");
+        }
+
         Team team = findTeamById(teamId);
         team.deleted();
         teamRepository.saveAndFlush(team);
 
     }
 
-    public void inviteTeam(TeamInviteRequestDto teamInviteRequestDto) {
-        for (UUID userId : teamInviteRequestDto.getUserIdList()) {
+    /**
+     * 유저를 팀에 초대하는 메서드
+     * @param userId
+     * @param teamInviteRequestDto
+     */
+    public void inviteTeam(UUID userId, TeamInviteRequestDto teamInviteRequestDto) {
+        TeamParticipant teamParticipant = findTeamParticipantByUserIdAndTeamId(userId, teamInviteRequestDto.getTeamId());
+
+        if (!teamParticipant.getHasAuthority()) {
+            throw new RuntimeException("팀 초대 권한이 없습니다");
+        }
+
+        for (UUID invitedUserId : teamInviteRequestDto.getUserIdList()) {
             TeamInvitation teamInvitation = TeamInvitation.builder()
                     .teamId(teamInviteRequestDto.getTeamId())
-                    .userId(userId)
+                    .userId(invitedUserId)
                     .build();
             teamInvitationRepository.save(teamInvitation);
         }
     }
 
+    /**
+     * 팀 초대를 수락하는 메서드
+     * @param userId
+     * @param teamId
+     */
     public void acceptTeam(UUID userId, Long teamId) {
         TeamInvitation teamInvitation = findTeamInvitationByUserIdAndTeamId(userId, teamId);
 
@@ -156,19 +183,40 @@ public class TeamServiceImpl implements TeamService {
 
     }
 
+    /**
+     * 팀 초대를 거절하는 메서드
+     * @param userId
+     * @param teamId
+     */
     public void refuseTeam(UUID userId, Long teamId) {
         teamInvitationRepository.delete(findTeamInvitationByUserIdAndTeamId(userId, teamId));
     }
 
+    /**
+     * 팀에서 탈퇴하는 메서드
+     * @param userId
+     * @param teamId
+     */
     public void leaveTeam(UUID userId, Long teamId) {
-        TeamParticipant teamParticipant = findTeamParticipantByUserAndTeam(userId, teamId);
+        TeamParticipant teamParticipant = findTeamParticipantByUserIdAndTeamId(userId, teamId);
         teamParticipantRepository.delete(teamParticipant);
     }
 
-    public void updateTeamParticipantAuthority(TeamParticipantAuthorityDto teamParticipantAuthorityDto) {
+    /**
+     * 팀 내 유저 권한을 변경하는 메서드
+     * @param userId
+     * @param teamParticipantAuthorityDto
+     */
+    public void updateTeamParticipantAuthority(UUID userId, TeamParticipantAuthorityDto teamParticipantAuthorityDto) {
+        TeamParticipant teamParticipant = findTeamParticipantByUserIdAndTeamId(userId, teamParticipantAuthorityDto.getTeamId());
+
+        if (!teamParticipant.getHasAuthority()) {
+            throw new RuntimeException("팀 참가자 권한 변경 권한이 없습니다");
+        }
+
         for (UserAuthDto userAuthDto : teamParticipantAuthorityDto.getUserAuthDtoList()) {
-            TeamParticipant teamParticipant = findTeamParticipantByUserAndTeam(userAuthDto.getUserId(), teamParticipantAuthorityDto.getTeamId());
-            teamParticipantRepository.save(teamParticipant.updateAuthority(userAuthDto.getHasAuthority()));
+            TeamParticipant updateTeamParticipant = findTeamParticipantByUserIdAndTeamId(userAuthDto.getUserId(), teamParticipantAuthorityDto.getTeamId());
+            teamParticipantRepository.save(updateTeamParticipant.updateAuthority(userAuthDto.getHasAuthority()));
         }
     }
 
@@ -188,12 +236,15 @@ public class TeamServiceImpl implements TeamService {
                 .orElseThrow(() -> new RuntimeException("해당하는 팀을 찾을 수 없습니다"));
     }
 
-    public TeamParticipant findTeamParticipantByUserAndTeam(UUID userId, Long teamId) {
+    // userId와 teamId로 TeamParticipant 찾고, 없으면 throw Exception
+    public TeamParticipant findTeamParticipantByUserIdAndTeamId(UUID userId, Long teamId) {
         User user = findUserById(userId);
         Team team = findTeamById(teamId);
         return teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(user, team)
                 .orElseThrow(() -> new RuntimeException("해당 팀에 참여하지 않습니다."));
     }
+
+    // userId와 teamId로 TeamInvitation 찾고, 없으면 throw Exception
     public TeamInvitation findTeamInvitationByUserIdAndTeamId(UUID userId, Long teamId) {
         return teamInvitationRepository.findByUserIdAndTeamId(userId, teamId)
                 .orElseThrow(() -> new RuntimeException("해당 팀에 초대되지 않았습니다."));

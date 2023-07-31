@@ -94,7 +94,7 @@ public class TeamTests {
         User user = userRepository.findByEmail("testUser")
                 .orElseThrow(() -> new ArithmeticException("유저를 찾을 수 없습니다"));
         Team createdTeam = teamService.createTeam(user.getId(), teamCreateRequestDto);
-        teamService.inviteUser(createdTeam, teamCreateRequestDto);
+        teamService.inviteUser(user.getId(), createdTeam, teamCreateRequestDto);
 
         //then
         Optional<TeamParticipant> teamParticipant = teamParticipantRepository.findByUser(hostUser);
@@ -138,10 +138,11 @@ public class TeamTests {
     public void deleteTeamTest() throws Exception {
         //given
         createTeamTest();
+        User user = userRepository.findByEmail("testUser").orElseThrow();
         Team team = teamRepository.findByName("testTeam").orElseThrow();
 
         //when
-        teamService.deleteTeam(team.getId());
+        teamService.deleteTeam(user.getId(), team.getId());
 
         //then
         assertThat(team.getIsDeleted()).isEqualTo(true);
@@ -184,10 +185,11 @@ public class TeamTests {
     public void updateTeamParticipantAuthorityTest() throws Exception {
         //given
         acceptTeam();
-        User user = userRepository.findByEmail("invitedUser1").orElseThrow();
+        User hostUser = userRepository.findByEmail("testUser").orElseThrow();
+        User updateUser = userRepository.findByEmail("invitedUser1").orElseThrow();
         Team team = teamRepository.findByName("testTeam").orElseThrow();
         UserAuthDto userAuthDto = UserAuthDto.builder()
-                .userId(user.getId())
+                .userId(updateUser.getId())
                 .hasAuthority(true)
                 .build();
         List<UserAuthDto> userAuthDtoList = new ArrayList<>();
@@ -198,11 +200,11 @@ public class TeamTests {
                 .userAuthDtoList(userAuthDtoList)
                 .build();
         //when
-        teamService.updateTeamParticipantAuthority(teamParticipantAuthorityDto);
+        teamService.updateTeamParticipantAuthority(hostUser.getId(), teamParticipantAuthorityDto);
 
         //then
 
-        TeamParticipant teamParticipant = teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(user, team)
+        TeamParticipant teamParticipant = teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(updateUser, team)
                 .orElseThrow();
         assertThat(teamParticipant.getHasAuthority()).isEqualTo(true);
 
