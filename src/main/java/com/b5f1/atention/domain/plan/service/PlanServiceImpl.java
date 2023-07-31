@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ public class PlanServiceImpl implements PlanService{
      */
     @Override
     public List<PlanResponseDto> getPlansByUserId(UUID userId) {
-        List<Plan> plans = planRepository.findAllByUserId(userId);
+        List<Plan> plans = planRepository.findAllByUserIdAndIsDeletedFalse(userId);
         return mapPlansToPlanResponseDtoList(plans);
     }
 
@@ -47,7 +48,7 @@ public class PlanServiceImpl implements PlanService{
      */
     @Override
     public List<PlanResponseDto> getPlansByTeamId(Long teamId) {
-        List<Plan> plans = planRepository.findAllByTeamId(teamId);
+        List<Plan> plans = planRepository.findAllByTeamIdAndIsDeletedFalse(teamId);
         return mapPlansToPlanResponseDtoList(plans);
     }
 
@@ -71,7 +72,7 @@ public class PlanServiceImpl implements PlanService{
      */
     @Override
     public PlanResponseDto updatePlan(Long planId, PlanRequestDto planRequestDto) {
-        Plan plan = planRepository.findById(planId)
+        Plan plan = planRepository.findByIdAndIsDeletedFalse(planId)
                 .orElseThrow(() -> new RuntimeException("해당하는 일정이 없습니다."));
         Plan updatedPlan = planRepository.save(plan.updatePlan(planRequestDto));
 //        mapPlanRequestDtoToPlan(planRequestDto);
@@ -85,8 +86,17 @@ public class PlanServiceImpl implements PlanService{
      */
     @Override
     public void deletePlan(Long planId) {
-        planRepository.deleteById(planId);
+        Optional<Plan> optionalPlan = planRepository.findByIdAndIsDeletedFalse(planId);
+        if (optionalPlan.isPresent()) {
+            Plan plan = optionalPlan.get();
+            plan.deleted();
+            planRepository.save(plan);
+        } else {
+            throw new RuntimeException("해당하는 일정이 없습니다");
+        }
     }
+
+    // 서비스 내부 로직
 
     /**
      * 일정 객체를 DTO 로 변환하는 메서드
