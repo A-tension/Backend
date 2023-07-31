@@ -135,4 +135,17 @@ public class TeamTests {
         //then
         assertThat(teamUpdateRequestDto.getName()).isEqualTo(teamUpdateResponseDto.getName());
     }
+
+    @Test
+    public void deleteTeamTest() throws Exception{
+        //given
+        createTeamTest();
+        Team team = teamRepository.findByName("testTeam").orElseThrow();
+
+        //when
+        teamService.deleteTeam(team.getId());
+
+        //then
+        assertThat(team.getIsDeleted()).isEqualTo(true);
+    }
 }

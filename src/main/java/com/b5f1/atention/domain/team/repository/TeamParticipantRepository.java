@@ -12,5 +12,5 @@ public interface TeamParticipantRepository extends JpaRepository<TeamParticipant
 
     Optional<TeamParticipant> findByUser(User user);
 
-    Optional<TeamParticipant> findByUserAndDeletedFalse(User user);
+    Optional<TeamParticipant> findByUserAndIsDeletedFalse(User user);
 }
