@@ -156,6 +156,10 @@ public class TeamServiceImpl implements TeamService {
 
     }
 
+    public void rejectTeam(UUID userId, Long teamId) {
+        teamInvitationRepository.delete(findTeamInvitationByUserIdAndTeamId(userId, teamId));
+    }
+
 
     // 아래는 서비스 내부 로직
 
