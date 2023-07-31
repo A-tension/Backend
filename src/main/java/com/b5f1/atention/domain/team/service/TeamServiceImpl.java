@@ -53,7 +53,7 @@ public class TeamServiceImpl implements TeamService {
      * @param teamCreateRequestDto
      * @Return Team
      */
-    public Team createTeam(UUID userId, TeamCreateRequestDto teamCreateRequestDto) {
+    public void createTeam(UUID userId, TeamCreateRequestDto teamCreateRequestDto) {
         Team team = Team.builder()
                 .name(teamCreateRequestDto.getName())
                 .build();
@@ -63,7 +63,7 @@ public class TeamServiceImpl implements TeamService {
         User hostUser = findUserById(userId);
         teamParticipantRepository.save(new TeamParticipant().createTeamParticipant(hostUser, team, true));
 
-        return team;
+        inviteUser(userId, team, teamCreateRequestDto);
     }
 
     /**
@@ -85,8 +85,14 @@ public class TeamServiceImpl implements TeamService {
      * @param teamId
      * @return teamDetailResponseDto
      */
-    public TeamDetailResponseDto getTeamDetail(Long teamId) {
+    public TeamDetailResponseDto getTeamDetail(UUID userId, Long teamId) {
+        User user = findUserById(userId);
         Team team = findTeamById(teamId);
+
+        // 유저가 팀에 속하지 않는 경우
+        teamParticipantRepository.findByUserAndIsDeletedFalse(user)
+                .orElseThrow(() -> new RuntimeException("팀에 속한 유저가 아닙니다."));
+
         List<TeamParticipant> teamParticipantList = team.getTeamParticipantList();
         TeamDetailResponseDto teamDetailResponseDto = new TeamDetailResponseDto().toTeamDetailResponseDto(team);
         for (TeamParticipant teamParticipant : teamParticipantList) {
