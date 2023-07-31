@@ -22,7 +22,7 @@ public class TeamParticipant extends BaseEntity {
 
     @Column
     @Builder.Default
-    private boolean hasAuthority = false;
+    private Boolean hasAuthority = false;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
@@ -48,6 +48,11 @@ public class TeamParticipant extends BaseEntity {
         this.hasAuthority = hasAuthority;
         user.getTeamParticipantList().add(this);
         team.getTeamParticipantList().add(this);
+        return this;
+    }
+
+    public TeamParticipant updateAuthority(Boolean hasAuthority) {
+        this.hasAuthority = hasAuthority;
         return this;
     }
 }

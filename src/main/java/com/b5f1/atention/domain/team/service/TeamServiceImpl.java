@@ -109,7 +109,7 @@ public class TeamServiceImpl implements TeamService {
                 .orElseThrow(() -> new RuntimeException("팀에 속한 유저가 아닙니다."));
 
         // 유저가 팀을 변경할 권한이 없는 경우
-        if (!teamParticipant.isHasAuthority()) {
+        if (!teamParticipant.getHasAuthority()) {
             throw new RuntimeException("팀을 변경할 권한이 없습니다.");
         }
 
@@ -163,6 +163,10 @@ public class TeamServiceImpl implements TeamService {
     public void leaveTeam(UUID userId, Long teamId) {
         TeamParticipant teamParticipant = findTeamParticipantByUserAndTeam(userId, teamId);
         teamParticipantRepository.delete(teamParticipant);
+    }
+
+    public void updateTeamParticipantAuthority(TeamParticipantAuthorityDto teamParticipantAuthorityDto) {
+
     }
 
 

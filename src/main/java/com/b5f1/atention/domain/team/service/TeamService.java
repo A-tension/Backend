@@ -17,8 +17,8 @@ public interface TeamService {
     public void deleteTeam(Long teamId);
     public void inviteTeam(TeamInviteRequestDto teamInviteRequestDto);
     public void acceptTeam(UUID userId, Long teamId);
-    public void refuseTeam(UUID userId, Long teamId);
-
+    public void leaveTeam(UUID userId, Long teamId);
+    public void updateTeamParticipantAuthority(List<TeamParticipantAuthorityDto> teamParticipantAuthorityDtoList);
 
     public User findUserById(UUID userId);
     public Team findTeamById(Long teamId);
