@@ -73,9 +73,9 @@ public class PlanServiceImpl implements PlanService{
     public PlanResponseDto updatePlan(Long planId, PlanRequestDto planRequestDto) {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new RuntimeException("해당하는 일정이 없습니다."));
-
-        mapPlanRequestDtoToPlan(planRequestDto);
-        Plan updatedPlan = planRepository.save(plan);
+        Plan updatedPlan = planRepository.save(plan.updatePlan(planRequestDto));
+//        mapPlanRequestDtoToPlan(planRequestDto);
+//        Plan updatedPlan = planRepository.save(plan);
         return mapPlanToPlanResponseDto(updatedPlan);
     }
 

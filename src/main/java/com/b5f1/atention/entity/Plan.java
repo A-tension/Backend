@@ -1,5 +1,7 @@
 package com.b5f1.atention.entity;
 
+import com.b5f1.atention.domain.plan.dto.PlanRequestDto;
+import com.b5f1.atention.domain.plan.service.PlanService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,5 +40,13 @@ public class Plan extends BaseEntity {
 
     @Column
     private String description;
+
+    public Plan updatePlan(PlanRequestDto planRequestDto) {
+        this.name = planRequestDto.getName();
+        this.startTime = planRequestDto.getStartTime();
+        this.endTime = planRequestDto.getEndTime();
+        this.description = planRequestDto.getDescription();
+        return this;
+    }
 
 }
