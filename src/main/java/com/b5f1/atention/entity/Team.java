@@ -1,5 +1,6 @@
 package com.b5f1.atention.entity;
 
+import com.b5f1.atention.domain.team.dto.TeamUpdateRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -33,5 +34,13 @@ public class Team extends BaseEntity {
     @OneToMany(mappedBy = "team")
     @Builder.Default
     private List<Image> imageList = new ArrayList<>();
+
+
+    public Team updateTeam(TeamUpdateRequestDto teamUpdateRequestDto) {
+        this.name = teamUpdateRequestDto.getName();
+        this.profileImage = teamUpdateRequestDto.getName();
+        this.description = teamUpdateRequestDto.getDescription();
+        return this;
+    }
 
 }
