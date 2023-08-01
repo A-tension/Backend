@@ -172,4 +172,15 @@ public class JwtService {
             return Optional.empty();
         }
     }
+
+    public boolean isTokenValid(String token) {
+        try {
+            //JWT 복화하 시 사용할 알고리즘 지정
+            JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
+            return true;
+        } catch (Exception e) {
+            log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
+            return false;
+        }
+    }
 }
