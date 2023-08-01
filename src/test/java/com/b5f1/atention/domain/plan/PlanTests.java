@@ -42,7 +42,7 @@ public class PlanTests {
                 .build();
 
         // When
-        PlanResponseDto createdPlan = planService.createPlan(planRequestDto);
+        PlanResponseDto createdPlan = planService.createPlan(UUID.randomUUID(), planRequestDto);
 
         // Then
         assertNotNull(createdPlan);
@@ -65,7 +65,7 @@ public class PlanTests {
                 .build();
 
         // When
-        PlanResponseDto updatedPlan = planService.updatePlan(plan.getId(), planRequestDto);
+        PlanResponseDto updatedPlan = planService.updatePlan(UUID.randomUUID(), plan.getId(), planRequestDto);
 
         // Then
         assertNotNull(updatedPlan);
@@ -77,38 +77,13 @@ public class PlanTests {
     }
 
     @Test
-    public void getAllPlansTest() {
-        // Given
-        createTestPlan();
-
-        // When
-        List<PlanResponseDto> plans = planService.getAllPlans();
-
-        // Then
-        assertFalse(plans.isEmpty());
-    }
-
-    @Test
-    public void getPlansByUserIdTest() {
-        // Given
-        UUID userId = UUID.randomUUID();
-        createTestPlanWithUserId(userId);
-
-        // When
-        List<PlanResponseDto> plans = planService.getPlansByUserId(userId);
-
-        // Then
-        assertFalse(plans.isEmpty());
-    }
-
-    @Test
     public void getPlansByTeamIdTest() {
         // Given
         Long teamId = 1L;
         createTestPlanWithTeamId(teamId);
 
         // When
-        List<PlanResponseDto> plans = planService.getPlansByTeamId(teamId);
+        List<PlanResponseDto> plans = planService.getAllTeamPlans(UUID.randomUUID(), teamId);
 
         // Then
         assertFalse(plans.isEmpty());
@@ -116,18 +91,6 @@ public class PlanTests {
 
     private Plan createTestPlan() {
         Plan plan = Plan.builder()
-                .userId(UUID.randomUUID())
-                .name("Test Plan")
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now().plusHours(2))
-                .description("Test Plan Description")
-                .build();
-        return planRepository.save(plan);
-    }
-
-    private Plan createTestPlanWithUserId(UUID userId) {
-        Plan plan = Plan.builder()
-                .userId(userId)
                 .name("Test Plan")
                 .startTime(LocalDateTime.now())
                 .endTime(LocalDateTime.now().plusHours(2))
@@ -138,7 +101,6 @@ public class PlanTests {
 
     private Plan createTestPlanWithTeamId(Long teamId) {
         Plan plan = Plan.builder()
-                .userId(UUID.randomUUID())
                 .teamId(teamId)
                 .name("Test Plan")
                 .startTime(LocalDateTime.now())

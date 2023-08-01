@@ -1,7 +1,6 @@
 package com.b5f1.atention.entity;
 
 import com.b5f1.atention.domain.plan.dto.PlanRequestDto;
-import com.b5f1.atention.domain.plan.service.PlanService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -22,9 +20,6 @@ public class Plan extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plan_id")
     private Long id;
-
-    @Column(columnDefinition = "BINARY(16)")
-    private UUID userId;
 
     @Column
     private Long teamId;
