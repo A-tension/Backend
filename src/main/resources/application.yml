@@ -1,0 +1,55 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_ID}
+    password: ${DB_PWD}
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 50
+      connection-timeout: 5000
+      connection-init-sql: SELECT 1
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      auto-commit: true
+
+  servlet:
+    multipart:
+      max-file-size: 25MB
+
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 1000
+
+  #Swaager 사용에 필요
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+#S3 setting
+#cloud.aws.credentials.accessKey=${S3_ACCESSKEY}
+#cloud.aws.credentials.secretKey=${S3_SECRETKEY}
+#cloud.aws.stack.auto=false
+
+# AWS S3 Service bucket
+#cloud.aws.s3.bucket=adventour-bucket
+#cloud.aws.region.static=ap-northeast-2
+
+# AWS S3 Bucket URL
+#cloud.aws.s3.bucket.url=https://adventour-bucket.s3.ap-northeast-2.amazonaws.com/
+
+logging:
+  level:
+    root: debug
+
