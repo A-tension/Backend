@@ -1,6 +1,7 @@
 package com.b5f1.atention.entity;
 
-import com.b5f1.atention.entity.enums.LoginWith;
+import com.b5f1.atention.entity.enums.Role;
+import com.b5f1.atention.entity.enums.SocialType;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -31,10 +32,6 @@ public class User extends BaseEntity {
     @Column
     private String profileImage;
 
-    @Column(name = "oauth")
-    @Enumerated(value = EnumType.STRING)
-    private LoginWith oAuth;
-
     @Column
     @Builder.Default
     private int ticket = 0;
@@ -49,4 +46,33 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     @Builder.Default
     private List<MyItem> myItemList = new ArrayList<>();
+
+    @Column(name = "oauth")
+    @Enumerated(value = EnumType.STRING)
+    private SocialType oAuth;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType; // KAKAO, NAVER, GOOGLE
+
+    private String refreshToken; // 리프레시 토큰
+
+    // 유저 권한 설정 메소드
+    public void authorizeUser() {
+        this.role = Role.USER;
+    }
+
+    // 유저 이름 변경 메서드
+    public void updateName(String name){
+        this.name = name;
+    }
+
+    // refreshToken 갱신 메서드
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+
 }
