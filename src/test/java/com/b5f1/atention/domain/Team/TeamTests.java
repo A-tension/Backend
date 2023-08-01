@@ -93,8 +93,8 @@ public class TeamTests {
         //when
         User user = userRepository.findByEmail("testUser")
                 .orElseThrow(() -> new ArithmeticException("유저를 찾을 수 없습니다"));
-        Team createdTeam = teamService.createTeam(user.getId(), teamCreateRequestDto);
-        teamService.inviteUser(user.getId(), createdTeam, teamCreateRequestDto);
+        teamService.createTeam(user.getId(), teamCreateRequestDto);
+//        teamService.inviteUser(user.getId(), createdTeam, teamCreateRequestDto);
 
         //then
         Optional<TeamParticipant> teamParticipant = teamParticipantRepository.findByUser(hostUser);
@@ -107,10 +107,11 @@ public class TeamTests {
         createTeamTest();
 
         // when
+        UUID userId = userRepository.findByEmail("testUser").orElseThrow().getId();
         Long teamId = teamRepository.findByName("testTeam").orElseThrow().getId();
 
         // then
-        System.out.println(teamService.getTeamDetail(teamId));
+        System.out.println(teamService.getTeamDetail(userId, teamId));
 
     }
 

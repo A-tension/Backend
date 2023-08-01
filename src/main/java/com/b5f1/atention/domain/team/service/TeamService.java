@@ -10,13 +10,15 @@ import java.util.UUID;
 public interface TeamService {
 
     public List<TeamResponseDto> findMyTeamList(UUID userId);
-    public Team createTeam(UUID userId, TeamCreateRequestDto teamCreateRequestDto);
+    public void createTeam(UUID userId, TeamCreateRequestDto teamCreateRequestDto);
     public void inviteUser(UUID userId, Team team, TeamCreateRequestDto teamCreateRequestDto);
-    public TeamDetailResponseDto getTeamDetail(Long teamId);
+    public TeamDetailResponseDto getTeamDetail(UUID userId, Long teamId);
     public TeamUpdateRequestDto updateTeam(UUID userId, Long teamId, TeamUpdateRequestDto teamUpdateRequestDto);
     public void deleteTeam(UUID userId, Long teamId);
     public void inviteTeam(UUID userId, TeamInviteRequestDto teamInviteRequestDto);
     public void acceptTeam(UUID userId, Long teamId);
+    public void refuseTeam(UUID userId, Long teamId);
+
     public void leaveTeam(UUID userId, Long teamId);
     public void updateTeamParticipantAuthority(UUID userId, TeamParticipantAuthorityDto teamParticipantAuthorityDto);
 
