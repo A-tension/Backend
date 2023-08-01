@@ -1,9 +1,6 @@
 package com.b5f1.atention.domain.team.service;
 
-import com.b5f1.atention.domain.team.dto.TeamCreateRequestDto;
-import com.b5f1.atention.domain.team.dto.TeamDetailResponseDto;
-import com.b5f1.atention.domain.team.dto.TeamResponseDto;
-import com.b5f1.atention.domain.team.dto.TeamUpdateRequestDto;
+import com.b5f1.atention.domain.team.dto.*;
 import com.b5f1.atention.entity.Team;
 import com.b5f1.atention.entity.User;
 
@@ -14,11 +11,14 @@ public interface TeamService {
 
     public List<TeamResponseDto> findMyTeamList(UUID userId);
     public Team createTeam(UUID userId, TeamCreateRequestDto teamCreateRequestDto);
-    public void inviteUser(Team team, TeamCreateRequestDto teamCreateRequestDto);
+    public void inviteUser(UUID userId, Team team, TeamCreateRequestDto teamCreateRequestDto);
     public TeamDetailResponseDto getTeamDetail(Long teamId);
-
     public TeamUpdateRequestDto updateTeam(UUID userId, Long teamId, TeamUpdateRequestDto teamUpdateRequestDto);
-
+    public void deleteTeam(UUID userId, Long teamId);
+    public void inviteTeam(UUID userId, TeamInviteRequestDto teamInviteRequestDto);
+    public void acceptTeam(UUID userId, Long teamId);
+    public void leaveTeam(UUID userId, Long teamId);
+    public void updateTeamParticipantAuthority(UUID userId, TeamParticipantAuthorityDto teamParticipantAuthorityDto);
 
     public User findUserById(UUID userId);
     public Team findTeamById(Long teamId);

@@ -1,8 +1,6 @@
 package com.b5f1.atention.domain.Team;
 
-import com.b5f1.atention.domain.team.dto.TeamCreateRequestDto;
-import com.b5f1.atention.domain.team.dto.TeamResponseDto;
-import com.b5f1.atention.domain.team.dto.TeamUpdateRequestDto;
+import com.b5f1.atention.domain.team.dto.*;
 import com.b5f1.atention.domain.team.repository.TeamInvitationRepository;
 import com.b5f1.atention.domain.team.repository.TeamParticipantRepository;
 import com.b5f1.atention.domain.team.repository.TeamRepository;
@@ -76,13 +74,13 @@ public class TeamTests {
 
         List<UUID> userIdList = new ArrayList<>();
         User invitedUser1 = User.builder()
-                .email("invitedUser")
+                .email("invitedUser1")
                 .meetingUrl("test")
                 .build();
         userIdList.add(userRepository.saveAndFlush(invitedUser1).getId());
 
         User invitedUser2 = User.builder()
-                .email("invitedUser")
+                .email("invitedUser2")
                 .meetingUrl("test")
                 .build();
         userIdList.add(userRepository.saveAndFlush(invitedUser2).getId());
@@ -96,7 +94,7 @@ public class TeamTests {
         User user = userRepository.findByEmail("testUser")
                 .orElseThrow(() -> new ArithmeticException("유저를 찾을 수 없습니다"));
         Team createdTeam = teamService.createTeam(user.getId(), teamCreateRequestDto);
-        teamService.inviteUser(createdTeam, teamCreateRequestDto);
+        teamService.inviteUser(user.getId(), createdTeam, teamCreateRequestDto);
 
         //then
         Optional<TeamParticipant> teamParticipant = teamParticipantRepository.findByUser(hostUser);
@@ -104,7 +102,7 @@ public class TeamTests {
     }
 
     @Test
-    public void getTeamDetailTest() throws Exception{
+    public void getTeamDetailTest() throws Exception {
         //given
         createTeamTest();
 
@@ -117,7 +115,7 @@ public class TeamTests {
     }
 
     @Test
-    public void updateTeamTest() throws Exception{
+    public void updateTeamTest() throws Exception {
         //given
         createTeamTest();
         User user = userRepository.findByEmail("testUser").orElseThrow();
@@ -134,5 +132,81 @@ public class TeamTests {
 
         //then
         assertThat(teamUpdateRequestDto.getName()).isEqualTo(teamUpdateResponseDto.getName());
+    }
+
+    @Test
+    public void deleteTeamTest() throws Exception {
+        //given
+        createTeamTest();
+        User user = userRepository.findByEmail("testUser").orElseThrow();
+        Team team = teamRepository.findByName("testTeam").orElseThrow();
+
+        //when
+        teamService.deleteTeam(user.getId(), team.getId());
+
+        //then
+        assertThat(team.getIsDeleted()).isEqualTo(true);
+    }
+
+    @Test
+    public void acceptTeam() throws Exception {
+        //given
+        createTeamTest();
+        Team team = teamRepository.findByName("testTeam").orElseThrow();
+        User user = userRepository.findByEmail("invitedUser1").orElseThrow();
+
+        //when
+        teamService.acceptTeam(user.getId(), team.getId());
+
+        //then
+        TeamParticipant teamParticipant = teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(user, team)
+                .orElseThrow();
+
+        assertThat(teamParticipant.getUser().getId()).isEqualTo(user.getId());
+
+    }
+
+    @Test
+    public void leaveTeamTest() throws Exception {
+        //given
+        createTeamTest();
+        User user = userRepository.findByEmail("testUser").orElseThrow();
+        Team team = teamRepository.findByName("testTeam").orElseThrow();
+        //when
+
+        teamService.leaveTeam(user.getId(), team.getId());
+
+        //then
+        Optional<TeamParticipant> teamParticipant = teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(user, team);
+        assertThat(teamParticipant).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    public void updateTeamParticipantAuthorityTest() throws Exception {
+        //given
+        acceptTeam();
+        User hostUser = userRepository.findByEmail("testUser").orElseThrow();
+        User updateUser = userRepository.findByEmail("invitedUser1").orElseThrow();
+        Team team = teamRepository.findByName("testTeam").orElseThrow();
+        UserAuthDto userAuthDto = UserAuthDto.builder()
+                .userId(updateUser.getId())
+                .hasAuthority(true)
+                .build();
+        List<UserAuthDto> userAuthDtoList = new ArrayList<>();
+        userAuthDtoList.add(userAuthDto);
+
+        TeamParticipantAuthorityDto teamParticipantAuthorityDto = new TeamParticipantAuthorityDto().builder()
+                .teamId(team.getId())
+                .userAuthDtoList(userAuthDtoList)
+                .build();
+        //when
+        teamService.updateTeamParticipantAuthority(hostUser.getId(), teamParticipantAuthorityDto);
+
+        //then
+
+        TeamParticipant teamParticipant = teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(updateUser, team)
+                .orElseThrow();
+        assertThat(teamParticipant.getHasAuthority()).isEqualTo(true);
+
     }
 }
