@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.UUID;
 
@@ -71,6 +72,42 @@ public class JwtService {
                 .withSubject(uuid.toString())
                 .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
                 .sign(Algorithm.HMAC512(secretKey));
+    }
+
+    /**
+     * AccessToken 헤더에 실어서 보내기
+     */
+    public void sendAccessToken(HttpServletResponse response, String accessToken) {
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        //Authorization : accessToken
+        response.setHeader(accessHeader, accessToken);
+        log.debug("재발급된 Access Token : {}", accessToken);
+    }
+
+    /**
+     * AccessToken + RefreshToken 헤더에 실어서 보내기
+     */
+    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        setAccessTokenHeader(response, accessToken);
+        setRefreshTokenHeader(response, refreshToken);
+        log.debug("Access Token, Refresh Token 헤더 설정 완료");
+    }
+
+    /**
+     * AccessToken 헤더 설정
+     */
+    public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
+        response.setHeader(accessHeader, accessToken);
+    }
+
+    /**
+     * RefreshToken 헤더 설정
+     */
+    public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
+        response.setHeader(refreshHeader, refreshToken);
     }
 
 }
