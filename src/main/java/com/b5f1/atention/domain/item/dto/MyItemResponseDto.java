@@ -23,7 +23,6 @@ public class MyItemResponseDto {
         return MyItemResponseDto.builder()
                 .name(item.getName())
                 .image(item.getImage())
-                .description(item.getDescription())
                 .build();
     }
 }
