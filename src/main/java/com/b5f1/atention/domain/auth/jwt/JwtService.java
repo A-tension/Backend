@@ -9,8 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -40,6 +42,8 @@ public class JwtService {
 
     // email 내용을 담을 클레임 이름
     private static final String EMAIL_CLAIM = "email";
+    // 토큰 추출을 위한 프리픽스
+    private static final String BEARER = "Bearer";
 
     // 사용자 데이터에 접근하기 위한 리포지토리
     private final UserRepository userRepository;
@@ -110,4 +114,62 @@ public class JwtService {
         response.setHeader(refreshHeader, refreshToken);
     }
 
+    /**
+     * RefreshToken DB에 저장 혹은 업데이트
+     * 존재하지 않는 사용자면 Exception 처리
+     */
+    public void updateRefreshToken(String email, String refreshToken) {
+        userRepository.findByEmail(email)
+                .ifPresentOrElse(
+                        user -> user.updateRefreshToken(refreshToken),
+                        () -> new Exception("일치하는 회원이 없습니다.")
+                );
+    }
+
+    /**
+     * 헤더에서 AccessToken 추출
+     * 토큰 형식 : Bearer XXX에서 Bearer를 제외하고 순수 토큰만 가져오기 위해서
+     * 헤더를 가져온 후 "Bearer"를 삭제(""로 replace)
+     */
+    public Optional<String> extractAccessToken(HttpServletRequest request) {
+        return Optional.ofNullable(request.getHeader(accessHeader))
+                .filter(refreshToken -> refreshToken.startsWith(BEARER))
+                .map(refreshToken -> refreshToken.replace(BEARER, ""));
+    }
+
+    /**
+     * 헤더에서 RefreshToken 추출
+     * 토큰 형식 : Bearer XXX에서 Bearer를 제외하고 순수 토큰만 가져오기 위해서
+     * 헤더를 가져온 후 "Bearer"를 삭제(""로 replace)
+     */
+    public Optional<String> extractRefreshToken(HttpServletRequest request) {
+        return Optional.ofNullable(request.getHeader(refreshHeader))
+                .filter(refreshToken -> refreshToken.startsWith(BEARER))
+                .map(refreshToken -> refreshToken.replace(BEARER, ""));
+    }
+
+    /**
+     * AccessToken에서 Email 추출
+     * 추출 전에 JWT.require()로 검증기 생성
+     * verify로 AceessToken 검증 후
+     * 유효하다면 getClaim()으로 이메일 추출
+     * 유효하지 않다면 빈 Optional 객체 반환
+     */
+    public Optional<String> extractEmail(String accessToken) {
+        try {
+            // 토큰 유효성 검사하는 데에 사용할 알고리즘이 있는 JWT verifier builder 반환
+            return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
+                    // 반환된 빌더로 JWT verifier 생성
+                    .build()
+                    // accessToken을 검증하고 유효하지 않다면 예외 발생
+                    .verify(accessToken)
+                    // claim(Email) 가져오기
+                    .getClaim(EMAIL_CLAIM)
+                    //JSON to String ex) {email : cjdfidrlwjd@naver.com } -> "cjdfidrlwjd@naver.com"
+                    .asString());
+        } catch (Exception e) {
+            log.error("액세스 토큰이 유효하지 않습니다.");
+            return Optional.empty();
+        }
+    }
 }
