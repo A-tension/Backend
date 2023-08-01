@@ -38,6 +38,9 @@ dependencies {
 	//	Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
+	//JWT
+	implementation 'com.auth0:java-jwt:4.2.1'
+
 	runtimeOnly 'com.mysql:mysql-connector-j'
 }
 
