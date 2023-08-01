@@ -53,3 +53,14 @@ logging:
   level:
     root: debug
 
+jwt:
+  secretKey: ${JWT_PWD}
+
+  access:
+    expiration: 3600000 # ms -> 1시간
+    header: Authorization
+
+  refresh:
+    expiration: 1209600000 #  ms -> 2주
+    header: Authorization-refresh
+
