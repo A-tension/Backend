@@ -8,8 +8,10 @@ import java.util.UUID;
 
 public interface PlanService {
 
-    // 팀 ID로 일정 가져오기
-    List<PlanResponseDto> getAllTeamPlans(UUID userId, Long teamId);
+    // 개인의 모든 일정 가져오기
+    List<PlanResponseDto> getAllPlans(UUID userId);
+    // 팀 일정 가져오기
+    List<PlanResponseDto> getAllTeamPlans(Long teamId);
     // 일정 생성
     PlanResponseDto createPlan(UUID userId, PlanRequestDto planRequestDto);
     // 일정 수정
