@@ -15,5 +15,5 @@ public interface MyItemRepository extends JpaRepository<MyItem, Long> {
 
     Optional<MyItem> findByUserAndIsDeletedFalse(User user);
 
-    Optional<MyItem> findByUserAndTeamAndIsDeletedFalse(User user, Item item);
+    Optional<MyItem> findByUserAndItemAndIsDeletedFalse(User user, Item item);
 }

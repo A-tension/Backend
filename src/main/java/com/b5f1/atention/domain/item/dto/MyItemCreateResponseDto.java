@@ -13,7 +13,6 @@ public class MyItemCreateResponseDto {
     // 아이템 이름
     private String name;
     // 아이템 이미지
-    private String itemImage;
-
+    private String image;
 
 }

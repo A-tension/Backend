@@ -33,4 +33,5 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item")
     @Builder.Default
     private List<MyItem> myItemList = new ArrayList<>();
+
 }

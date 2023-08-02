@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MyItemResponseDto {
-
+public class MyItemDto {
     // 아이템 이름
     private String name;
     // 아이템 이미지
@@ -18,11 +17,4 @@ public class MyItemResponseDto {
     // 아이템 설명
     private String description;
 
-    // item -> itemResponseDto로 변환
-    public MyItemResponseDto toItemResponseDto(Item item) {
-        return MyItemResponseDto.builder()
-                .name(item.getName())
-                .image(item.getImage())
-                .build();
-    }
 }

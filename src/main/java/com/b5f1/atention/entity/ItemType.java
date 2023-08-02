@@ -15,6 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ItemType extends BaseEntity {
+    /**
+     * 아이템 타입은
+     * 발표 지목권, 발표 면제권, emoji, 글자 색상권
+     * 4종류
+     * */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_type_id")
