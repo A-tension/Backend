@@ -25,11 +25,14 @@ jobs:
         run: chmod +x gradlew
 
         # Gradle Build With Test
+      - name: create env file
+        run: touch .env
+        
+      - name: env setting
+        run: echo "${{ secrets.ENV }}" >> .env
+
       - name: Build with Gradle
-        run: 
-          touch .env
-          echo "${{ secrets.ENV }}" >> .env
-          ./gradlew build
+        run: ./gradlew build
 
         # Image Tagging
       - name: Docker meta
