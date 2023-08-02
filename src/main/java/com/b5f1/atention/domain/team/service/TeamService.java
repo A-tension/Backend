@@ -2,6 +2,7 @@ package com.b5f1.atention.domain.team.service;
 
 import com.b5f1.atention.domain.team.dto.*;
 import com.b5f1.atention.entity.Team;
+import com.b5f1.atention.entity.TeamParticipant;
 import com.b5f1.atention.entity.User;
 
 import java.util.List;
@@ -25,4 +26,5 @@ public interface TeamService {
     public User findUserById(UUID userId);
     public Team findTeamById(Long teamId);
 
+    public void hasTeamParticipantAuthority(TeamParticipant teamParticipant, String message);
 }
