@@ -22,8 +22,8 @@ public interface ItemService {
     // 아이템 뽑기
     public MyItemCreateResponseDto createMyItem(UUID userId);
 
-    // 아이템 개수 차감
-    public void deleteItem(UUID userId, Long itemId);
+    // 아이템 사용
+    public void useItem(UUID userId, Long itemId);
 
     // 내부 로직
     // userId로 User 찾기

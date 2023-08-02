@@ -47,8 +47,9 @@ public class GetMyItemResponseDto {
 //    }
 
     // 티켓 개수 설정 메서드
-    public void setTicket(int ticket) {
-        this.ticket = ticket;
-    }
+    // set은 안쓰는게 좋음
+//    public void setTicket(int ticket) {
+//        this.ticket = ticket;
+//    }
 
 }

@@ -51,7 +51,7 @@ public class User extends BaseEntity {
     private List<MyItem> myItemList = new ArrayList<>();
 
     // 티켓 사용 메서드
-    public void useTicket(int ticket) {
-        this.ticket = ticket - 1;
+    public void useTicket() {
+        this.ticket --;
     }
 }

@@ -34,11 +34,10 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toSet());
     }
 
-
     /**
      * 나의 보유 아이템 목록 조회 메서드
      * @param userId
-     * @return myItemResponseDto
+     * @return GetMyItemResponseDto
      */
     @Override
     public GetMyItemResponseDto findMyItemList(UUID userId) {
@@ -48,8 +47,12 @@ public class ItemServiceImpl implements ItemService {
         // user와 연관관계가 있는 아이템 list 얻기
         List<MyItem> myItemList = user.getMyItemList();
 
-        GetMyItemResponseDto getMyItemResponseDto = new GetMyItemResponseDto();
-        getMyItemResponseDto.setTicket(user.getTicket());
+        GetMyItemResponseDto getMyItemResponseDto = GetMyItemResponseDto
+                .builder()
+                .myItemDtoList(new ArrayList<>())
+                .ticket(user.getTicket())
+                .build();
+
         // 내 아이템 리스트에 있는 아이템들을 getMyItemResponseDto 형식에 맞게 담기
         for (MyItem myItem : myItemList) {
             Item item = myItem.getItem();
@@ -68,7 +71,9 @@ public class ItemServiceImpl implements ItemService {
         // userId로 user 찾고
         User user = findUserById(userId);
         // ticket 사용(차감)
-        user.useTicket(user.getTicket());
+        user.useTicket();
+        // save
+        userRepository.save(user);
         // 전체 아이템 set
         Set<Long> allItemSet = findAllItems();
         List<MyItem> myItemList = user.getMyItemList();
@@ -91,7 +96,12 @@ public class ItemServiceImpl implements ItemService {
         }
         // 새로 뽑힌 아이템
         Item newItem = findItemById(newItemNumber);
-
+        MyItem newMyItem = MyItem
+                .builder()
+                .item(newItem)
+                .user(user)
+                .build();
+        myItemRepository.save(newMyItem);
         return MyItemCreateResponseDto.builder()
                 .name(newItem.getName())
                 .image(newItem.getImage())
@@ -99,13 +109,17 @@ public class ItemServiceImpl implements ItemService {
     }
 
     /**
-     * 아이템 뽑기 메서드
+     * 아이템 사용 메서드
      * @param userId, itemId
      */
     @Override
-    public void deleteItem(UUID userId, Long itemId) {
-        MyItem usedItem = findMyItemByUserIdAndItemId(userId, itemId);
-        usedItem.deleted();
+    public void useItem(UUID userId, Long itemId) {
+        MyItem useMyItem = findMyItemByUserIdAndItemId(userId, itemId);
+        Long itemTypeId = useMyItem.getItem().getItemType().getId();
+        if (itemTypeId == 1 || itemTypeId == 2) {
+            useMyItem.deleted();
+            myItemRepository.save(useMyItem);
+        }
     }
 
     // 아래는 서비스 내부 로직
