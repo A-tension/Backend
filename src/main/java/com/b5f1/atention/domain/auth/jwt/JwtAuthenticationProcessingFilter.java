@@ -105,8 +105,21 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     //액세스 토큰 체크 & 인증 처리 메소드
     public void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,
                                                   FilterChain filterChain) throws ServletException, IOException {
+        log.debug("checkAccessTokenAndAuthentication() 호출");
+        //request header에서 액세스 토큰 추출
+        jwtService.extractAccessToken(request)
+//                .filter(jwtService::isTokenValid) 유효성 중복 검사라고 판단하여 주석처리
+                //액세스 토큰에서 extractUUID로 UUID을 추출
+                .ifPresent(accessToken -> jwtService.extractUUID(accessToken)
+                        //DB에서 추출한 uuid를 사용하는 유저 객체 반환
+                        .ifPresent(uuid -> userRepository.findById(UUID.fromString(uuid))
+                                //반환 받은 유저 객체를 saveAuthentication()로 인증 처리
+                                .ifPresent(this::saveAuthentication)));
+        //다음 인증 필터로 진행
+        filterChain.doFilter(request, response);
     }
 
     public void saveAuthentication(User myUser) {
+
     }
 }
