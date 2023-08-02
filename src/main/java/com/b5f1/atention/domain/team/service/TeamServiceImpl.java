@@ -68,6 +68,7 @@ public class TeamServiceImpl implements TeamService {
 
     /**
      * 초대받은 유저로 TeamInvitation 생성하는 메서드
+     * @param userId
      * @param team
      * @param teamCreateRequestDto
      */
@@ -82,16 +83,15 @@ public class TeamServiceImpl implements TeamService {
 
     /**
      * teamId를 통해 Team 정보와 참여한 User 정보를 return
+     * @param userId
      * @param teamId
      * @return teamDetailResponseDto
      */
     public TeamDetailResponseDto getTeamDetail(UUID userId, Long teamId) {
-        User user = findUserById(userId);
         Team team = findTeamById(teamId);
 
-        // 유저가 팀에 속하지 않는 경우
-        teamParticipantRepository.findByUserAndIsDeletedFalse(user)
-                .orElseThrow(() -> new RuntimeException("팀에 속한 유저가 아닙니다."));
+        // 유저가 팀에 속하지 않는 경우 체크
+        findTeamParticipantByUserIdAndTeamId(userId, teamId);
 
         List<TeamParticipant> teamParticipantList = team.getTeamParticipantList();
         TeamDetailResponseDto teamDetailResponseDto = new TeamDetailResponseDto().toTeamDetailResponseDto(team);
@@ -103,21 +103,17 @@ public class TeamServiceImpl implements TeamService {
 
     /**
      * 팀 세부 정보를 수정하는 DTO를 받아 성공하면 그대로 변경된 값을 전달
-     * @param teamUpdateRequestDto
+     * @param userId
+     * @param teamId
      * @return teamUpdateRequestDto
      */
     public TeamUpdateRequestDto updateTeam(UUID userId, Long teamId, TeamUpdateRequestDto teamUpdateRequestDto) {
         Team team = findTeamById(teamId);
-        User user = findUserById(userId);
 
-        // 유저가 팀에 속하지 않는 경우
-        TeamParticipant teamParticipant = teamParticipantRepository.findByUserAndIsDeletedFalse(user)
-                .orElseThrow(() -> new RuntimeException("팀에 속한 유저가 아닙니다."));
+        TeamParticipant teamParticipant = findTeamParticipantByUserIdAndTeamId(userId, teamId);
 
         // 유저가 팀을 변경할 권한이 없는 경우
-        if (!teamParticipant.getHasAuthority()) {
-            throw new RuntimeException("팀을 변경할 권한이 없습니다.");
-        }
+        hasTeamParticipantAuthority(teamParticipant, "팀 수정 권한이 없습니다.");
 
         // 실제 DB 값을 가져올건지, 그대로 전달할건지 생각해볼 것
 //        teamRepository.save(team.updateTeam(teamUpdateRequestDto));
@@ -141,9 +137,7 @@ public class TeamServiceImpl implements TeamService {
     public void deleteTeam(UUID userId, Long teamId) {
         TeamParticipant teamParticipant = findTeamParticipantByUserIdAndTeamId(userId, teamId);
 
-        if (!teamParticipant.getHasAuthority()) {
-            throw new RuntimeException("팀 삭제 권한이 없습니다.");
-        }
+        hasTeamParticipantAuthority(teamParticipant, "팀 삭제 권한이 없습니다.");
 
         Team team = findTeamById(teamId);
         team.deleted();
@@ -159,9 +153,7 @@ public class TeamServiceImpl implements TeamService {
     public void inviteTeam(UUID userId, TeamInviteRequestDto teamInviteRequestDto) {
         TeamParticipant teamParticipant = findTeamParticipantByUserIdAndTeamId(userId, teamInviteRequestDto.getTeamId());
 
-        if (!teamParticipant.getHasAuthority()) {
-            throw new RuntimeException("팀 초대 권한이 없습니다");
-        }
+        hasTeamParticipantAuthority(teamParticipant, "팀 초대 권한이 없습니다.");
 
         for (UUID invitedUserId : teamInviteRequestDto.getUserIdList()) {
             TeamInvitation teamInvitation = TeamInvitation.builder()
@@ -216,9 +208,7 @@ public class TeamServiceImpl implements TeamService {
     public void updateTeamParticipantAuthority(UUID userId, TeamParticipantAuthorityDto teamParticipantAuthorityDto) {
         TeamParticipant teamParticipant = findTeamParticipantByUserIdAndTeamId(userId, teamParticipantAuthorityDto.getTeamId());
 
-        if (!teamParticipant.getHasAuthority()) {
-            throw new RuntimeException("팀 참가자 권한 변경 권한이 없습니다");
-        }
+        hasTeamParticipantAuthority(teamParticipant, "팀 참가자 권한 변경 권한이 없습니다.");
 
         for (UserAuthDto userAuthDto : teamParticipantAuthorityDto.getUserAuthDtoList()) {
             TeamParticipant updateTeamParticipant = findTeamParticipantByUserIdAndTeamId(userAuthDto.getUserId(), teamParticipantAuthorityDto.getTeamId());
@@ -240,6 +230,13 @@ public class TeamServiceImpl implements TeamService {
     public Team findTeamById(Long teamId) {
         return teamRepository.findByIdAndIsDeletedFalse(teamId)
                 .orElseThrow(() -> new RuntimeException("해당하는 팀을 찾을 수 없습니다"));
+    }
+
+    // 유저가 팀에 대한 권한이 없는 경우 message 포함한 Exception throw
+    public void hasTeamParticipantAuthority(TeamParticipant teamParticipant, String message) {
+        if (teamParticipant.getHasAuthority()) {
+            throw new RuntimeException(message);
+        }
     }
 
     // userId와 teamId로 TeamParticipant 찾고, 없으면 throw Exception
