@@ -234,7 +234,7 @@ public class TeamServiceImpl implements TeamService {
 
     // 유저가 팀에 대한 권한이 없는 경우 message 포함한 Exception throw
     public void hasTeamParticipantAuthority(TeamParticipant teamParticipant, String message) {
-        if (teamParticipant.getHasAuthority()) {
+        if (!teamParticipant.getHasAuthority()) {
             throw new RuntimeException(message);
         }
     }
