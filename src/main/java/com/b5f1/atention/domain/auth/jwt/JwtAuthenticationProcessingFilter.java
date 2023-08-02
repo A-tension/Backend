@@ -120,6 +120,19 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     public void saveAuthentication(User myUser) {
+        //UserDetails : 인증 객체로 캡슐화되는 사용자 정보를 저장하는데 사용되는 객체
+        UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
+                .username(myUser.getId().toString())
+                .password("")
+                .roles(myUser.getRole().name())
+                .build();
 
+        Authentication authentication =
+                //Sprig Security의 new UsernamePasswordAuthenticationToken()로 인증 객체인 Authentication 객체 생성
+                new UsernamePasswordAuthenticationToken(userDetailsUser, null,
+                        authoritiesMapper.mapAuthorities(userDetailsUser.getAuthorities()));
+
+        //현재 실행 중인 스레드의 보안 컨텍스트(SecurityContext)에 인증 정보(Authentication)를 설정
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
