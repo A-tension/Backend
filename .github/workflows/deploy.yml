@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '11'
-          distribution: 'openJDK'
+          distribution: 'temurin'
 
         # Grant gradlew Permission
       - name: Grant execute permission for gradlew
