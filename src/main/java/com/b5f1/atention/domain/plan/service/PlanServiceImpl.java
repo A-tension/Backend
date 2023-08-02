@@ -30,22 +30,32 @@ public class PlanServiceImpl implements PlanService{
     private final UserRepository userRepository;
 
     /**
-     * 팀 ID로 해당하는 팀의 일정을 가져오는 메서드
+     * 개인이 속한 모든 팀의 일정을 가져오는 메서드
      * @param userId
+     * @return List<Plan>
+     */
+    @Override
+    public List<PlanResponseDto> getAllPlans(UUID userId) {
+        User user = userRepository.findByIdAndIsDeletedFalse(userId)
+                .orElseThrow(() -> new RuntimeException("해당하는 유저가 없습니다."));
+
+        Optional<TeamParticipant> teamParticipants = teamParticipantRepository.findByUserAndIsDeletedFalse(user);
+        List<Long> teamIds = teamParticipants.stream()
+                .map(TeamParticipant::getTeam)
+                .map(Team::getId)
+                .collect(Collectors.toList());
+
+        List<Plan> plans = planRepository.findAllByTeamIdInAndIsDeletedFalse(teamIds);
+        return mapPlansToPlanResponseDtoList(plans);
+    }
+
+    /**
+     * 팀 ID로 해당하는 팀의 일정을 가져오는 메서드
      * @param teamId
      * @return List<Plan>
      */
     @Override
-    public List<PlanResponseDto> getAllTeamPlans(UUID userId, Long teamId) {
-        if (userId != null) {
-            User user = userRepository.findByIdAndIsDeletedFalse(userId)
-                    .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
-            List<TeamParticipant> teamParticipantList = user.getTeamParticipantList();
-            for (TeamParticipant teamParticipant : teamParticipantList) {
-                teamParticipant.getTeam();
-                teamParticipant.getHasAuthority();
-            }
-        }
+    public List<PlanResponseDto> getAllTeamPlans(Long teamId) {
         List<Plan> plans = planRepository.findAllByTeamIdAndIsDeletedFalse(teamId);
         return mapPlansToPlanResponseDtoList(plans);
     }

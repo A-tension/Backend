@@ -15,4 +15,5 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
 
     Optional<Plan> findByIdAndIsDeletedFalse(Long id);
 
+    List<Plan> findAllByTeamIdInAndIsDeletedFalse(List<Long> teamIds);
 }

@@ -83,7 +83,7 @@ public class PlanTests {
         createTestPlanWithTeamId(teamId);
 
         // When
-        List<PlanResponseDto> plans = planService.getAllTeamPlans(UUID.randomUUID(), teamId);
+        List<PlanResponseDto> plans = planService.getAllTeamPlans(teamId);
 
         // Then
         assertFalse(plans.isEmpty());
