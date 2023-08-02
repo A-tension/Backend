@@ -39,7 +39,7 @@ public class PlanServiceImpl implements PlanService{
         User user = userRepository.findByIdAndIsDeletedFalse(userId)
                 .orElseThrow(() -> new RuntimeException("해당하는 유저가 없습니다."));
 
-        Optional<TeamParticipant> teamParticipants = teamParticipantRepository.findByUserAndIsDeletedFalse(user);
+        List<TeamParticipant> teamParticipants = user.getTeamParticipantList();
         List<Long> teamIds = teamParticipants.stream()
                 .map(TeamParticipant::getTeam)
                 .map(Team::getId)
@@ -58,6 +58,17 @@ public class PlanServiceImpl implements PlanService{
     public List<PlanResponseDto> getAllTeamPlans(Long teamId) {
         List<Plan> plans = planRepository.findAllByTeamIdAndIsDeletedFalse(teamId);
         return mapPlansToPlanResponseDtoList(plans);
+    }
+
+    /**
+     * 일정 상세 보기 메서드
+     * @param planId
+     * @return plan
+     */
+    @Override
+    public Optional<Plan> getPlan(Long planId) {
+        Optional<Plan> plan = planRepository.findByIdAndIsDeletedFalse(planId);
+        return plan;
     }
 
     /**
