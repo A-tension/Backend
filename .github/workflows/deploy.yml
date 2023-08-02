@@ -26,7 +26,10 @@ jobs:
 
         # Gradle Build With Test
       - name: Build with Gradle
-        run: ./gradlew build
+        run: 
+          touch .env
+          echo "${{ secrets.ENV }}" >> .env
+          ./gradlew build
 
         # Image Tagging
       - name: Docker meta
