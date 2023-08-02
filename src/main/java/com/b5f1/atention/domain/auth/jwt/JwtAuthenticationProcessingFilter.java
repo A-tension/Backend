@@ -80,11 +80,26 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     public void reIssueRefreshTokenAndAccessToken(HttpServletResponse response, String refreshToken) {
-
+        //리프레시 토큰으로 유저 정보 찾기
+        userRepository.findByRefreshToken(refreshToken)
+                .ifPresent(user -> {
+                    //reIssueRefreshToken()로 리프레시 토큰 재발급 & DB에 refreshToken 업데이트
+                    String reIssuedRefreshToken = reIssueRefreshToken(user);
+                    //JwtService.sendAccessTokenAndRefreshToken()으로 응답 헤더에 accessToken, refreshToken 담기
+                    jwtService.sendAccessAndRefreshToken(response,
+                            //액세스 토큰 발급
+                            jwtService.createAccessToken(user.getId(), user.getEmail()),
+                            reIssuedRefreshToken);
+                });
     }
 
     private String reIssueRefreshToken(User user) {
-        return null;
+        //리프레시 토큰 재발급
+        String reIssuedRefreshToken = jwtService.createRefreshToken(user.getId());
+        //DB에 리프레시 토큰 업데이트
+        user.updateRefreshToken(reIssuedRefreshToken);
+        userRepository.saveAndFlush(user);
+        return reIssuedRefreshToken;
     }
 
     //액세스 토큰 체크 & 인증 처리 메소드
