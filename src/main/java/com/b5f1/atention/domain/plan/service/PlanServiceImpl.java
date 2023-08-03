@@ -36,15 +36,16 @@ public class PlanServiceImpl implements PlanService{
      */
     @Override
     public List<PlanResponseDto> getAllPlans(UUID userId) {
+        // userId로 user 조회
         User user = userRepository.findByIdAndIsDeletedFalse(userId)
                 .orElseThrow(() -> new RuntimeException("해당하는 유저가 없습니다."));
-
+        // teamParticipant 객체에 담긴 Team 에서 teamId 들을 List 로 저장
         List<TeamParticipant> teamParticipants = user.getTeamParticipantList();
         List<Long> teamIds = teamParticipants.stream()
                 .map(TeamParticipant::getTeam)
                 .map(Team::getId)
                 .collect(Collectors.toList());
-
+        // List 에 담긴 teamId 들로 모든 plan 을 find 후 반환
         List<Plan> plans = planRepository.findAllByTeamIdInAndIsDeletedFalse(teamIds);
         return mapPlansToPlanResponseDtoList(plans);
     }
@@ -67,8 +68,7 @@ public class PlanServiceImpl implements PlanService{
      */
     @Override
     public Optional<Plan> getPlan(Long planId) {
-        Optional<Plan> plan = planRepository.findByIdAndIsDeletedFalse(planId);
-        return plan;
+        return planRepository.findByIdAndIsDeletedFalse(planId);
     }
 
     /**
@@ -79,21 +79,13 @@ public class PlanServiceImpl implements PlanService{
      */
     @Override
     public PlanResponseDto createPlan(UUID userId, PlanRequestDto planRequestDto) {
-        Optional<User> currentUser = userRepository.findByIdAndIsDeletedFalse(userId);
-        // 팀 ID로 팀 가져오기
-        Optional<Team> currentTeam = teamRepository.findByIdAndIsDeletedFalse(planRequestDto.getTeamId());
-
-        if (currentUser.isEmpty() || currentTeam.isEmpty()) {
-            throw new RuntimeException("해당 사용자 또는 팀을 찾을 수 없습니다.");
-        }
-
-        Optional<TeamParticipant> optionalTeamParticipant =
-                teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(currentUser.get(), currentTeam.get());
-
-        if (optionalTeamParticipant.isEmpty() || !optionalTeamParticipant.get().getHasAuthority()) {
+        // 현재 유저의 권한을 확인하는 메서드
+        Optional<TeamParticipant> optionalTeamParticipant = authorityCheck(userId, planRequestDto);
+        // 권한이 없으면 예외 처리
+        if (optionalTeamParticipant.isEmpty() || Boolean.TRUE.equals(!optionalTeamParticipant.get().getHasAuthority())) {
             throw new RuntimeException("일정을 생성할 권한이 없습니다.");
         }
-
+        // 권한이 있으면 dto 로 변환 후 반환
         Plan plan = mapPlanRequestDtoToPlan(planRequestDto);
         Plan savedPlan = planRepository.save(plan);
         return mapPlanToPlanResponseDto(savedPlan);
@@ -109,21 +101,13 @@ public class PlanServiceImpl implements PlanService{
      */
     @Override
     public PlanResponseDto updatePlan(UUID userId, Long planId, PlanRequestDto planRequestDto) {
-        Optional<User> currentUser = userRepository.findByIdAndIsDeletedFalse(userId);
-        // 팀 ID로 팀 가져오기
-        Optional<Team> currentTeam = teamRepository.findByIdAndIsDeletedFalse(planRequestDto.getTeamId());
-
-        if (currentUser.isEmpty() || currentTeam.isEmpty()) {
-            throw new RuntimeException("해당 사용자 또는 팀을 찾을 수 없습니다.");
-        }
-
-        Optional<TeamParticipant> optionalTeamParticipant =
-                teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(currentUser.get(), currentTeam.get());
-
-        if (optionalTeamParticipant.isEmpty() || !optionalTeamParticipant.get().getHasAuthority()) {
+        // 현재 유저의 권한을 확인하는 메서드
+        Optional<TeamParticipant> optionalTeamParticipant =  authorityCheck(userId, planRequestDto);
+        // 권한이 없으면 예외 처리
+        if (optionalTeamParticipant.isEmpty() || Boolean.TRUE.equals(!optionalTeamParticipant.get().getHasAuthority())) {
             throw new RuntimeException("일정을 수정할 권한이 없습니다.");
         }
-
+        // 수정할 일정 객체 하나를 가져와서 수정 후 반환
         Plan plan = planRepository.findByIdAndIsDeletedFalse(planId)
                 .orElseThrow(() -> new RuntimeException("해당하는 일정이 없습니다."));
         Plan updatedPlan = planRepository.save(plan.updatePlan(planRequestDto));
@@ -139,21 +123,13 @@ public class PlanServiceImpl implements PlanService{
      */
     @Override
     public void deletePlan(UUID userId, Long planId, PlanRequestDto planRequestDto) {
-        Optional<User> currentUser = userRepository.findByIdAndIsDeletedFalse(userId);
-        // 팀 ID로 팀 가져오기
-        Optional<Team> currentTeam = teamRepository.findByIdAndIsDeletedFalse(planRequestDto.getTeamId());
-
-        if (currentUser.isEmpty() || currentTeam.isEmpty()) {
-            throw new RuntimeException("해당 사용자 또는 팀을 찾을 수 없습니다.");
-        }
-
-        Optional<TeamParticipant> optionalTeamParticipant =
-                teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(currentUser.get(), currentTeam.get());
-
-        if (optionalTeamParticipant.isEmpty() || !optionalTeamParticipant.get().getHasAuthority()) {
+        // 현재 유저의 권한을 확인하는 메서드
+        Optional<TeamParticipant> optionalTeamParticipant =  authorityCheck(userId, planRequestDto);
+        // 권한이 없으면 예외 처리
+        if (optionalTeamParticipant.isEmpty() || Boolean.TRUE.equals(!optionalTeamParticipant.get().getHasAuthority())) {
             throw new RuntimeException("일정을 삭제할 권한이 없습니다.");
         }
-
+        // 일정 객체 가져와서 is_deleted를 true로 바꾼다.
         Optional<Plan> optionalPlan = planRepository.findByIdAndIsDeletedFalse(planId);
         if (optionalPlan.isPresent()) {
             Plan plan = optionalPlan.get();
@@ -164,7 +140,7 @@ public class PlanServiceImpl implements PlanService{
         }
     }
 
-    // 서비스 내부 로직
+    // 서비스 내부에서 사용하는 로직
 
     /**
      * 일정 객체를 DTO 로 변환하는 메서드
@@ -206,4 +182,21 @@ public class PlanServiceImpl implements PlanService{
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 권한을 검사하는 메서드
+     * @param userId
+     * @param planRequestDto
+     */
+    private Optional<TeamParticipant> authorityCheck(UUID userId, PlanRequestDto planRequestDto) {
+        // userId로 user 조회
+        Optional<User> currentUser = userRepository.findByIdAndIsDeletedFalse(userId);
+        // dto 안의 team 에서 teamId 가져옴
+        Optional<Team> currentTeam = teamRepository.findByIdAndIsDeletedFalse(planRequestDto.getTeamId());
+        // user 또는 team 이 없으면 예외 처리
+        if (currentUser.isEmpty() || currentTeam.isEmpty()) {
+            throw new RuntimeException("해당 사용자 또는 팀을 찾을 수 없습니다.");
+        }
+        // 있으면 user와 team 찾아서 teamParticipant 객체 반환
+        return teamParticipantRepository.findByUserAndTeamAndIsDeletedFalse(currentUser.get(), currentTeam.get());
+    }
 }
