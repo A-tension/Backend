@@ -146,13 +146,8 @@ public class TeamServiceImpl implements TeamService {
         List<TeamParticipant> deleteTeamParticipantList = teamParticipantRepository.findAllByTeamAndIsDeletedFalse(team);
         // TeamParticipant 지우는 단계
         for (TeamParticipant deleteTeamParticipant : deleteTeamParticipantList) {
-            // isDeleted True
-            deleteTeamParticipant.deleted();
-            // user.TeamParticipantList 에서 실제로 제거
-            deleteTeamParticipant.getUser().getTeamParticipantList().remove(deleteTeamParticipant);
-            // team.TeamParticipantList 에서 실제로 제거
-            deleteTeamParticipant.getTeam().getTeamParticipantList().remove(deleteTeamParticipant);
-            teamParticipantRepository.delete(deleteTeamParticipant);
+            User user = deleteTeamParticipant.getUser();
+            teamParticipantRepository.delete(teamParticipant.deleteTeamParticipant(user, team));
         }
         team.deleted();
         teamRepository.saveAndFlush(team);
@@ -185,12 +180,10 @@ public class TeamServiceImpl implements TeamService {
      */
     public void acceptTeam(UUID userId, Long teamId) {
         TeamInvitation teamInvitation = findTeamInvitationByUserIdAndTeamId(userId, teamId);
+        User user = findUserById(userId);
+        Team team = findTeamById(teamId);
 
-        TeamParticipant teamParticipant = TeamParticipant.builder()
-                .user(findUserById(userId))
-                .team(findTeamById(teamId))
-                .build();
-        teamParticipantRepository.save(teamParticipant);
+        teamParticipantRepository.save(new TeamParticipant().createTeamParticipant(user, team, false));
         teamInvitationRepository.delete(teamInvitation);
 
     }
@@ -211,7 +204,10 @@ public class TeamServiceImpl implements TeamService {
      */
     public void leaveTeam(UUID userId, Long teamId) {
         TeamParticipant teamParticipant = findTeamParticipantByUserIdAndTeamId(userId, teamId);
-        teamParticipantRepository.delete(teamParticipant);
+        User user = findUserById(userId);
+        Team team = findTeamById(teamId);
+
+        teamParticipantRepository.delete(teamParticipant.deleteTeamParticipant(user, team));
     }
 
     /**
