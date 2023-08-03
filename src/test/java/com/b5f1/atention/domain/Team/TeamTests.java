@@ -142,11 +142,16 @@ public class TeamTests {
         User user = userRepository.findByEmail("testUser").orElseThrow();
         Team team = teamRepository.findByName("testTeam").orElseThrow();
 
+        assertThat(user.getTeamParticipantList().get(0)).isEqualTo(team.getTeamParticipantList().get(0));
         //when
         teamService.deleteTeam(user.getId(), team.getId());
 
         //then
+
         assertThat(team.getIsDeleted()).isEqualTo(true);
+        assertThat(user.getTeamParticipantList().size()).isEqualTo(0);
+//        assertThat(team.getTeamParticipantList().size()).isEqualTo(0);
+        assertThat(teamParticipantRepository.findByUser(user)).isEqualTo(Optional.empty());
     }
 
     @Test

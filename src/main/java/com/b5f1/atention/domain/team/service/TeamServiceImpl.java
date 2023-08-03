@@ -140,6 +140,20 @@ public class TeamServiceImpl implements TeamService {
         hasTeamParticipantAuthority(teamParticipant, "팀 삭제 권한이 없습니다.");
 
         Team team = findTeamById(teamId);
+
+        //  아래 코드 사용 시 team.getTeamParticipantList 주소값을 복사하여 아래에서 remove 할 때 오류 발생
+//        List<TeamParticipant> deleteTeamParticipantList = team.getTeamParticipantList();
+        List<TeamParticipant> deleteTeamParticipantList = teamParticipantRepository.findAllByTeamAndIsDeletedFalse(team);
+        // TeamParticipant 지우는 단계
+        for (TeamParticipant deleteTeamParticipant : deleteTeamParticipantList) {
+            // isDeleted True
+            deleteTeamParticipant.deleted();
+            // user.TeamParticipantList 에서 실제로 제거
+            deleteTeamParticipant.getUser().getTeamParticipantList().remove(deleteTeamParticipant);
+            // team.TeamParticipantList 에서 실제로 제거
+            deleteTeamParticipant.getTeam().getTeamParticipantList().remove(deleteTeamParticipant);
+            teamParticipantRepository.delete(deleteTeamParticipant);
+        }
         team.deleted();
         teamRepository.saveAndFlush(team);
 
