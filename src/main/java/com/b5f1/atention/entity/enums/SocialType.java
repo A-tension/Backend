@@ -1,7 +1,7 @@
 package com.b5f1.atention.entity.enums;
 
-public enum LoginWith {
-    NAVER,
+public enum SocialType {
     KAKAO,
+    NAVER,
     GOOGLE;
 }
