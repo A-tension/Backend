@@ -87,7 +87,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
                     //JwtService.sendAccessTokenAndRefreshToken()으로 응답 헤더에 accessToken, refreshToken 담기
                     jwtService.sendAccessAndRefreshToken(response,
                             //액세스 토큰 발급
-                            jwtService.createAccessToken(user.getId(), user.getEmail()),
+                            jwtService.createAccessToken(user.getId()),
                             reIssuedRefreshToken);
                 });
     }

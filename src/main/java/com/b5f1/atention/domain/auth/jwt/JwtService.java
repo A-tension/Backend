@@ -49,7 +49,7 @@ public class JwtService {
     private final UserRepository userRepository;
 
     //AccessToken 생성 메소드
-    public String createAccessToken(UUID uuid, String email) {
+    public String createAccessToken(UUID uuid) {
         Date now = new Date();
         // JWT 토큰을 생성하는 빌더 반환
         // create메서드는 라이브러리 내부상 static으로 선언되어 있음.
@@ -58,8 +58,6 @@ public class JwtService {
                 .withSubject(uuid.toString())
                 // 토큰 만료 시간 설정
                 .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
-                // 클레임에 email 저장
-                .withClaim(EMAIL_CLAIM, email)
                 // HMAC512 알고리즘 사용, application-jwt.yml에서 지정한 secret 키로 암호화
                 .sign(Algorithm.HMAC512(secretKey));
     }
