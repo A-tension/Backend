@@ -51,6 +51,13 @@ public class TeamParticipant extends BaseEntity {
         return this;
     }
 
+    public TeamParticipant deleteTeamParticipant(User user, Team team) {
+        user.getTeamParticipantList().remove(this);
+        team.getTeamParticipantList().remove(this);
+        this.deleted();
+        return this;
+    }
+
     public TeamParticipant updateAuthority(Boolean hasAuthority) {
         this.hasAuthority = hasAuthority;
         return this;

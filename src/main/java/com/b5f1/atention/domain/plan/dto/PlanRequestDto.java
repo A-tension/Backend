@@ -17,14 +17,12 @@ import java.util.UUID;
 public class PlanRequestDto {
     // 일정 제목
     private String name;
+    // 팀 ID
+    private Long teamId;
     // 일정 시작 시간
     private LocalDateTime startTime;
     // 일정 종료 시간
     private LocalDateTime endTime;
-    // 유저 ID
-    private UUID userId;
-    // 팀 ID
-    private Long teamId;
     // 일정 상세
     private String description;
 }
