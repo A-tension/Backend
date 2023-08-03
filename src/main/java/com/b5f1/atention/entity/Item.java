@@ -1,5 +1,6 @@
 package com.b5f1.atention.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,10 +24,14 @@ public class Item extends BaseEntity {
     @Column
     private String image;
 
-    @Column
-    private String description;
+    // 아이템 종류 속성 (새로 추가)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_type_id", nullable = false)
+    private ItemType itemType;
 
     @OneToMany(mappedBy = "item")
     @Builder.Default
     private List<MyItem> myItemList = new ArrayList<>();
+
 }
