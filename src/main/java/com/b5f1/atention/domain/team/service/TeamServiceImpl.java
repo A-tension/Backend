@@ -140,6 +140,15 @@ public class TeamServiceImpl implements TeamService {
         hasTeamParticipantAuthority(teamParticipant, "팀 삭제 권한이 없습니다.");
 
         Team team = findTeamById(teamId);
+
+        //  아래 코드 사용 시 team.getTeamParticipantList 주소값을 복사하여 아래에서 remove 할 때 오류 발생
+//        List<TeamParticipant> deleteTeamParticipantList = team.getTeamParticipantList();
+        List<TeamParticipant> deleteTeamParticipantList = teamParticipantRepository.findAllByTeamAndIsDeletedFalse(team);
+        // TeamParticipant 지우는 단계
+        for (TeamParticipant deleteTeamParticipant : deleteTeamParticipantList) {
+            User user = deleteTeamParticipant.getUser();
+            teamParticipantRepository.delete(teamParticipant.deleteTeamParticipant(user, team));
+        }
         team.deleted();
         teamRepository.saveAndFlush(team);
 
@@ -171,12 +180,10 @@ public class TeamServiceImpl implements TeamService {
      */
     public void acceptTeam(UUID userId, Long teamId) {
         TeamInvitation teamInvitation = findTeamInvitationByUserIdAndTeamId(userId, teamId);
+        User user = findUserById(userId);
+        Team team = findTeamById(teamId);
 
-        TeamParticipant teamParticipant = TeamParticipant.builder()
-                .user(findUserById(userId))
-                .team(findTeamById(teamId))
-                .build();
-        teamParticipantRepository.save(teamParticipant);
+        teamParticipantRepository.save(new TeamParticipant().createTeamParticipant(user, team, false));
         teamInvitationRepository.delete(teamInvitation);
 
     }
@@ -197,7 +204,10 @@ public class TeamServiceImpl implements TeamService {
      */
     public void leaveTeam(UUID userId, Long teamId) {
         TeamParticipant teamParticipant = findTeamParticipantByUserIdAndTeamId(userId, teamId);
-        teamParticipantRepository.delete(teamParticipant);
+        User user = findUserById(userId);
+        Team team = findTeamById(teamId);
+
+        teamParticipantRepository.delete(teamParticipant.deleteTeamParticipant(user, team));
     }
 
     /**
