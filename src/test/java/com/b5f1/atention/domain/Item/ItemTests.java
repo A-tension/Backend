@@ -105,7 +105,8 @@ public class ItemTests {
         Item item2 = itemRepository.findByNameAndIsDeletedFalse(myItemCreateResponseDto.getName())
                 .orElseThrow(() -> new RuntimeException("해당 아이템을 찾을 수 없습니다"));
         myItemList.add(new MyItem().builder().item(item2).user(user1).build());
-
+//        System.out.println(item1.getName());
+//        System.out.println(item2.getName());
         //when
         List<MyItemDto> myItemDtoList = itemService.findMyItemList(user1.getId()).getMyItemDtoList();
         List<MyItem> myItemList2 = new ArrayList<>();
