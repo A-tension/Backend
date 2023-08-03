@@ -29,7 +29,6 @@ import java.util.UUID;
  *                              인증 성공 처리는 하지 않고 실패 처리
  *
  */
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
@@ -124,7 +123,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
                 .username(myUser.getId().toString())
                 .password("")
-                .roles(myUser.getRole().name())
+                .roles("")
                 .build();
 
         Authentication authentication =

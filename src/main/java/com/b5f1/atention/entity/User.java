@@ -39,6 +39,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String meetingUrl;
 
+
     @OneToMany(mappedBy = "user")
     @Builder.Default
     private List<TeamParticipant> teamParticipantList = new ArrayList<>();
@@ -47,32 +48,21 @@ public class User extends BaseEntity {
     @Builder.Default
     private List<MyItem> myItemList = new ArrayList<>();
 
-    @Column(name = "oauth")
-    @Enumerated(value = EnumType.STRING)
-    private SocialType oAuth;
-
+    // KAKAO, NAVER, GOOGLE
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private SocialType socialType;
 
-    @Enumerated(EnumType.STRING)
-    private SocialType socialType; // KAKAO, NAVER, GOOGLE
+    // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
+    private String socialId;
 
-    private String refreshToken; // 리프레시 토큰
+    private String refreshToken;
 
-    // 유저 권한 설정 메소드
-    public void authorizeUser() {
-        this.role = Role.USER;
-    }
-
-    // 유저 이름 변경 메서드
     public void updateName(String name){
         this.name = name;
     }
 
-    // refreshToken 갱신 메서드
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
-
 
 }
