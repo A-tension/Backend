@@ -22,6 +22,7 @@ import java.util.UUID;
 public class JwtService {
 
     // JWT 서명에 사용되는 비밀 키
+    @Value("${jwt.secretKey}")
      private String secretKey;
 
     // 액세스 토큰 만료 기간(ms)
