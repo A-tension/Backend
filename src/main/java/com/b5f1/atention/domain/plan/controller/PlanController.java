@@ -2,19 +2,14 @@ package com.b5f1.atention.domain.plan.controller;
 
 import com.b5f1.atention.common.MessageWithData;
 import com.b5f1.atention.domain.plan.dto.PlanRequestDto;
-import com.b5f1.atention.domain.plan.dto.PlanResponseDto;
 import com.b5f1.atention.domain.plan.service.PlanService;
-import com.b5f1.atention.entity.Plan;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -26,44 +21,44 @@ public class PlanController {
     private final PlanService planService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<MessageWithData> getAllUserPlans(@PathVariable UUID userId) {
-//        List<PlanResponseDto> plans = planService.getAllPlans(userId);
-//        return ResponseEntity.ok(plans);
+    @Operation(summary = "모든 일정 조회", description = "유저가 속한 모든 팀의 일정 조회 요청 API 입니다.")
+    public ResponseEntity<MessageWithData> getAllUserPlans(Authentication authentication) {
+//        return new ResponseEntity<>(new MessageWithData(("가입한 모든 그룹의 일정을 가져왔습니다."),planService.getAllPlans(authentication.getName()));
         return null;
     }
 
     @GetMapping("/{teamId}")
+    @Operation(summary = "팀 일정 조회", description = "팀의 일정 조회 요청 API 입니다.")
     public ResponseEntity<MessageWithData> getAllTeamPlans(@PathVariable Long teamId) {
-//        List<PlanResponseDto> plans = planService.getAllTeamPlans(teamId);
-//        return ResponseEntity.ok(plans);
+//        return new ResponseEntity<>(new MessageWithData(("그룹의 일정을 가져왔습니다."),planService.getAllTeamPlans(teamId));
         return null;
     }
 
     @GetMapping("/{planId}")
+    @Operation(summary = "일정 상세 조회", description = "일정 상세 조회 요청 API 입니다.")
     public ResponseEntity<MessageWithData> getPlan(@PathVariable Long planId) {
-//        Optional<Plan> plan = planService.getPlan(planId);
-//        return plan;
+//        return new ResponseEntity<>(new MessageWithData(("일정 상세정보를 가져왔습니다."),planService.getPlan(planId));
         return null;
     }
 
     @PostMapping("/{userId}")
-    public ResponseEntity<MessageWithData> createPlan(@PathVariable UUID userId, @RequestBody PlanRequestDto planRequestDto) {
-//        PlanResponseDto createdPlan = planService.createPlan(userId, planRequestDto);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createdPlan);
+    @Operation(summary = "일정 생성", description = "일정 생성 요청 API 입니다.")
+    public ResponseEntity<MessageWithData> createPlan(Authentication authentication, @RequestBody PlanRequestDto planRequestDto) {
+//        return new ResponseEntity<>(new MessageWithData(("일정을 생성했습니다."),planService.createPlan(authentication.getName(), planRequestDto);
         return null;
     }
 
     @PutMapping("/{userId}/{planId}")
-    public ResponseEntity<MessageWithData> updatePlan(@PathVariable UUID userId, @PathVariable Long planId, @RequestBody PlanRequestDto planRequestDto) {
-//        PlanResponseDto updatedPlan = planService.updatePlan(userId, planId, planRequestDto);
-//        return ResponseEntity.ok(updatedPlan);
+    @Operation(summary = "일정 수정", description = "일정 수정 요청 API 입니다.")
+    public ResponseEntity<MessageWithData> updatePlan(Authentication authentication, @PathVariable Long planId, @RequestBody PlanRequestDto planRequestDto) {
+//        return new ResponseEntity<>(new MessageWithData(("일정을 수정했습니다."),planService.updatePlan(authentication.getName(),planId), planRequestDto);
         return null;
     }
 
-    @DeleteMapping("/{planId}")
-    public ResponseEntity<MessageWithData> deletePlan(@PathVariable UUID userId, @PathVariable Long planId, @RequestBody PlanRequestDto planRequestDto) {
-//        planService.deletePlan(userId, planId, planRequestDto);
-//        return ResponseEntity.noContent().build();
+    @DeleteMapping("/{userId}/{planId}")
+    @Operation(summary = "일정 삭제", description = "일정 삭제 요청 API 입니다.")
+    public ResponseEntity<MessageWithData> deletePlan(Authentication authentication, @PathVariable Long planId, @RequestBody PlanRequestDto planRequestDto) {
+//        return new ResponseEntity<>(new MessageWithData(("일정을 삭제했습니다."),planService.deletePlan(authentication.getName(),planId, planRequestDto));
         return null;
     }
 }
