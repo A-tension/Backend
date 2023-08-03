@@ -32,7 +32,8 @@ public class ItemType extends BaseEntity {
     private String description;
 
     // 아래 코드 없어도 돌아가나 check 해보자
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "itemType")
     @Builder.Default
     private List<Item> itemList = new ArrayList<>();
+
 }

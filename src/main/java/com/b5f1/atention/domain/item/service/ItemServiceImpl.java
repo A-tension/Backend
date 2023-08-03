@@ -96,12 +96,10 @@ public class ItemServiceImpl implements ItemService {
         }
         // 새로 뽑힌 아이템
         Item newItem = findItemById(newItemNumber);
-        MyItem newMyItem = MyItem
-                .builder()
-                .item(newItem)
-                .user(user)
-                .build();
-        myItemRepository.save(newMyItem);
+
+        // createMyItem 메서드로 user의 MyItemList에 update해줌과 동시에
+        // db 저장
+        myItemRepository.save(new MyItem().createMyItem(user, newItem));
         return MyItemCreateResponseDto.builder()
                 .name(newItem.getName())
                 .image(newItem.getImage())

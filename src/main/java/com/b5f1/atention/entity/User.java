@@ -50,6 +50,11 @@ public class User extends BaseEntity {
     @Builder.Default
     private List<MyItem> myItemList = new ArrayList<>();
 
+    // 티켓 획득 메서드
+    public void addTicket() {
+        this.ticket ++;
+    }
+
     // 티켓 사용 메서드
     public void useTicket() {
         this.ticket --;

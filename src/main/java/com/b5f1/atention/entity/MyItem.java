@@ -30,4 +30,10 @@ public class MyItem extends BaseEntity {
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
+    public MyItem createMyItem(User user, Item item) {
+        this.user = user;
+        this.item = item;
+        user.getMyItemList().add(this);
+        return this;
+    }
 }
