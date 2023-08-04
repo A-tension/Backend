@@ -110,7 +110,10 @@ public class JwtService {
     public void updateRefreshToken(UUID uuid, String refreshToken) {
         userRepository.findById(uuid)
                 .ifPresentOrElse(
-                        user -> user.updateRefreshToken(refreshToken),
+                        user -> {
+                            user.updateRefreshToken(refreshToken);
+                            userRepository.save(user);
+                            },
                         () -> new Exception("일치하는 회원이 없습니다.")
                 );
     }
