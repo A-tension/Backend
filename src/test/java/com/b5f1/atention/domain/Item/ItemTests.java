@@ -1,6 +1,6 @@
 package com.b5f1.atention.domain.Item;
 
-import com.b5f1.atention.domain.item.dto.MyItemCreateResponseDto;
+import com.b5f1.atention.domain.item.dto.CreateMyItemResponseDto;
 import com.b5f1.atention.domain.item.dto.MyItemDto;
 import com.b5f1.atention.domain.item.repository.ItemRepository;
 import com.b5f1.atention.domain.item.repository.ItemTypeRepository;
@@ -21,7 +21,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,7 +51,7 @@ public class ItemTests {
         // 아이템 3개를 만들고, 저장, 이 때 아이템Id들을 저장해놓는다
         // findAllItems 메서드를 써서 set를 받아온 후 위 아이템 3개가 있는지 확인
         //given
-        ItemType itemType1= ItemType.builder()
+        ItemType itemType1 = ItemType.builder()
                 .build();
         itemType1 = itemTypeRepository.save(itemType1);
         // 아이템 3개 저장
@@ -81,49 +80,47 @@ public class ItemTests {
         assertThat(allItemsSet.contains(itemId3)).isEqualTo(true);
     }
 
-//    @Test
-//    public void findMyItemListTests (){
-//        // 아이템 2개 만들어서 user1 아이템에 넣고 넣은 후 myItem개수 2개인지 확인해보자
-//        //given
-//        // 임의 user 생성 후 db 저장
-//        User user1 = User.builder()
-//                .email("testEmail1")
-//                .meetingUrl("testUrl1")
-//                .build();
-//        // 티켓 2장
-//        user1.addTicket();
-//        user1.addTicket();
-//        user1 = userRepository.save(user1);
-//        List<MyItem> myItemList = new ArrayList<>();
-//        // 임의의 myItem 생성
-//        MyItemCreateResponseDto myItemCreateResponseDto = itemService.createMyItem(user1.getId());
-//        // optional 쓰는 대신 orElseThrow해주면 optional<Item>이 아닌 item으로 사용가능
-//        Item item1 = itemRepository.findByNameAndIsDeletedFalse(myItemCreateResponseDto.getName())
-//                .orElseThrow(() -> new RuntimeException("해당 아이템을 찾을 수 없습니다"));
-//        myItemList.add(new MyItem().builder().item(item1).user(user1).build());
-//        myItemCreateResponseDto = itemService.createMyItem(user1.getId());
-//        Item item2 = itemRepository.findByNameAndIsDeletedFalse(myItemCreateResponseDto.getName())
-//                .orElseThrow(() -> new RuntimeException("해당 아이템을 찾을 수 없습니다"));
-//        myItemList.add(new MyItem().builder().item(item2).user(user1).build());
-//
-//        //when
-//        List<MyItemDto> myItemDtoList = itemService.findMyItemList(user1.getId()).getMyItemDtoList();
-//        List<MyItem> myItemList2 = new ArrayList<>();
-//        for (MyItemDto myItemDto : myItemDtoList) {
-//            Item item = itemRepository.findByNameAndIsDeletedFalse(myItemDto.getName())
-//                    .orElseThrow(() -> new RuntimeException("해당 아이템을 찾을 수 없습니다"));
-//            MyItem myItem = myItemRepository.findByUserAndItemAndIsDeletedFalse(user1, item)
-//                    .orElseThrow(() -> new RuntimeException("해당 아이템을 찾을 수 없습니다"));
-//            myItemList2.add(myItem);
-//        }
-//
-//
-//        //then
-//        assertThat(myItemList).isEqualTo(myItemList2);
-//    }
+    @Test
+    public void findMyItemListTests() {
+        // 아이템 2개 만들어서 user1 아이템에 넣고 넣은 후 myItem개수 2개인지 확인해보자
+        //given
+        // 임의 user 생성 후 db 저장
+        User user1 = User.builder()
+                .email("testEmail1")
+                .meetingUrl("testUrl1")
+                .build();
+        // 티켓 2장
+        user1.addTicket();
+        user1.addTicket();
+        user1 = userRepository.save(user1);
+        List<MyItem> myItemList = new ArrayList<>();
+        // 임의의 myItem 생성
+        CreateMyItemResponseDto createMyItemResponseDto = itemService.createMyItem(user1.getId());
+        // optional 쓰는 대신 orElseThrow해주면 optional<Item>이 아닌 item으로 사용가능
+        Item item1 = itemRepository.findByNameAndIsDeletedFalse(createMyItemResponseDto.getName())
+                .orElseThrow(() -> new RuntimeException("해당 아이템을 찾을 수 없습니다"));
+        myItemList.add(myItemRepository.save(MyItem.builder().item(item1).user(user1).build()));
+        createMyItemResponseDto = itemService.createMyItem(user1.getId());
+        Item item2 = itemRepository.findByNameAndIsDeletedFalse(createMyItemResponseDto.getName())
+                .orElseThrow(() -> new RuntimeException("해당 아이템을 찾을 수 없습니다"));
+        myItemList.add(myItemRepository.save(MyItem.builder().item(item2).user(user1).build()));
+        //when
+        List<MyItemDto> myItemDtoList = itemService.findMyItemList(user1.getId()).getMyItemDtoList();
+        List<MyItem> myItemList2 = new ArrayList<>();
+        for (MyItemDto myItemDto : myItemDtoList) {
+            Item item = itemRepository.findByNameAndIsDeletedFalse(myItemDto.getName())
+                    .orElseThrow(() -> new RuntimeException("해당 아이템을 찾을 수 없습니다"));
+            List<MyItem> sameMyItemList = myItemRepository.findByUserAndItemAndIsDeletedFalse(user1, item);
+            myItemList2.addAll(sameMyItemList);
+        }
+
+
+        //then
+        assertThat(myItemList).isEqualTo(myItemList2);
+    }
 
     @Test
-    public void createMyItemTests(){
+    public void createMyItemTests() {
         //given
         User user1 = User.builder()
                 .email("testEmail1")

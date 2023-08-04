@@ -1,6 +1,6 @@
 package com.b5f1.atention.domain.item.service;
 
-import com.b5f1.atention.domain.item.dto.MyItemCreateResponseDto;
+import com.b5f1.atention.domain.item.dto.CreateMyItemResponseDto;
 import com.b5f1.atention.domain.item.dto.GetMyItemResponseDto;
 import com.b5f1.atention.domain.item.repository.ItemRepository;
 import com.b5f1.atention.domain.item.repository.MyItemRepository;
@@ -67,7 +67,7 @@ public class ItemServiceImpl implements ItemService {
      * @return MyItemCreateResponseDto
      */
     @Override
-    public MyItemCreateResponseDto createMyItem(UUID userId) {
+    public CreateMyItemResponseDto createMyItem(UUID userId) {
         // userId로 user 찾고
         User user = findUserById(userId);
         // ticket 사용(차감)
@@ -100,7 +100,7 @@ public class ItemServiceImpl implements ItemService {
         // createMyItem 메서드로 user의 MyItemList에 update해줌과 동시에
         // db 저장
         myItemRepository.save(new MyItem().createMyItem(user, newItem));
-        return MyItemCreateResponseDto.builder()
+        return CreateMyItemResponseDto.builder()
                 .name(newItem.getName())
                 .image(newItem.getImage())
                 .build();
@@ -112,7 +112,8 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public void useItem(UUID userId, Long itemId) {
-        MyItem useMyItem = findMyItemByUserIdAndItemId(userId, itemId);
+        List<MyItem> myItemList = findMyItemByUserIdAndItemId(userId, itemId);
+        MyItem useMyItem = myItemList.get(0);
         Long itemTypeId = useMyItem.getItem().getItemType().getId();
         if (itemTypeId == 1 || itemTypeId == 2) {
             useMyItem.deleted();
@@ -141,11 +142,10 @@ public class ItemServiceImpl implements ItemService {
     // userId로 사용자 찾고, itemId로 아이템 찾고, 없으면 throw Exception
     // 추후에 Exception 변경 예정
     @Override
-    public MyItem findMyItemByUserIdAndItemId(UUID userId, Long itemId) {
+    public List<MyItem> findMyItemByUserIdAndItemId(UUID userId, Long itemId) {
         User user = findUserById(userId);
         Item item = findItemById(itemId);
-        return myItemRepository.findByUserAndItemAndIsDeletedFalse(user, item)
-                .orElseThrow(() -> new RuntimeException("해당하는 아이템을 찾을 수 없습니다"));
+        return myItemRepository.findByUserAndItemAndIsDeletedFalse(user, item);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.b5f1.atention.domain.item.service;
 
-import com.b5f1.atention.domain.item.dto.MyItemCreateResponseDto;
+import com.b5f1.atention.domain.item.dto.CreateMyItemResponseDto;
 import com.b5f1.atention.domain.item.dto.GetMyItemResponseDto;
 import com.b5f1.atention.entity.Item;
 import com.b5f1.atention.entity.MyItem;
@@ -20,7 +20,7 @@ public interface ItemService {
     public GetMyItemResponseDto findMyItemList(UUID userId);
 
     // 아이템 뽑기
-    public MyItemCreateResponseDto createMyItem(UUID userId);
+    public CreateMyItemResponseDto createMyItem(UUID userId);
 
     // 아이템 사용
     public void useItem(UUID userId, Long itemId);
@@ -33,5 +33,5 @@ public interface ItemService {
     public Item findItemById(Long itemId);
 
     // userId & itemId로 myItem 찾기
-    public MyItem findMyItemByUserIdAndItemId(UUID userId, Long itemId);
+    public List<MyItem> findMyItemByUserIdAndItemId(UUID userId, Long itemId);
 }
