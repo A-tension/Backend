@@ -15,12 +15,11 @@ import java.util.UUID;
 @Getter
 public class OAuthAttributes {
 
-    private String nameAttributeKey; // OAuth2 로그인 진행 시 키가 되는 필드 값, PK와 같은 의미
     private OAuth2UserInfo oauth2UserInfo; // 소셜 타입별 로그인 유저 정보(닉네임, 이메일, 프로필 사진 등등)
-
+    private UUID id;
+    private String refreshToken;
     @Builder
-    public OAuthAttributes(String nameAttributeKey, OAuth2UserInfo oauth2UserInfo) {
-        this.nameAttributeKey = nameAttributeKey;
+    public OAuthAttributes(OAuth2UserInfo oauth2UserInfo) {
         this.oauth2UserInfo = oauth2UserInfo;
     }
 
@@ -30,35 +29,31 @@ public class OAuthAttributes {
      * 소셜별 of 메소드(ofGoogle, ofKaKao, ofNaver)들은 각각 소셜 로그인 API에서 제공하는
      * 회원의 식별값(id), attributes, nameAttributeKey를 저장 후 build
      */
-    public static OAuthAttributes of(SocialType socialType,
-                                     String userNameAttributeName, Map<String, Object> attributes) {
+    public static OAuthAttributes of(SocialType socialType, Map<String, Object> attributes) {
 
         if (socialType == SocialType.NAVER) {
-            return ofNaver(userNameAttributeName, attributes);
+            return ofNaver(attributes);
         }
         if (socialType == SocialType.KAKAO) {
-            return ofKakao(userNameAttributeName, attributes);
+            return ofKakao(attributes);
         }
-        return ofGoogle(userNameAttributeName, attributes);
+        return ofGoogle(attributes);
     }
 
-    private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
+    private static OAuthAttributes ofKakao(Map<String, Object> attributes) {
         return OAuthAttributes.builder()
-                .nameAttributeKey(userNameAttributeName)
                 .oauth2UserInfo(new KakaoOAuth2UserInfo(attributes))
                 .build();
     }
 
-    public static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
+    public static OAuthAttributes ofGoogle(Map<String, Object> attributes) {
         return OAuthAttributes.builder()
-                .nameAttributeKey(userNameAttributeName)
                 .oauth2UserInfo(new GoogleOAuth2UserInfo(attributes))
                 .build();
     }
 
-    public static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
+    public static OAuthAttributes ofNaver(Map<String, Object> attributes) {
         return OAuthAttributes.builder()
-                .nameAttributeKey(userNameAttributeName)
                 .oauth2UserInfo(new NaverOAuth2UserInfo(attributes))
                 .build();
     }
@@ -69,15 +64,24 @@ public class OAuthAttributes {
      * OAuth2UserInfo에서 email, nickname, imageUrl을 가져와서 build
      * id에는 UUID로 중복 없는 랜덤 값 생성
      */
-    public User toEntity(SocialType socialType, OAuth2UserInfo oauth2UserInfo) {
+    public User toEntity(SocialType socialType, OAuthAttributes oAuthAttributes) {
         return User.builder()
-                .id(UUID.randomUUID())
-                .email(oauth2UserInfo.getEmail())
-                .name(oauth2UserInfo.getName())
-                .profileImage(oauth2UserInfo.getProfileImage())
+                .id(oAuthAttributes.getId())
+                .refreshToken(oAuthAttributes.getRefreshToken())
+                .email(oAuthAttributes.getOauth2UserInfo().getEmail())
+                .name(oAuthAttributes.getOauth2UserInfo().getName())
+                .profileImage(oAuthAttributes.getOauth2UserInfo().getProfileImage())
                 .meetingUrl("")
                 .socialType(socialType)
-                .socialId(oauth2UserInfo.getSocialId())
+                .socialId(oAuthAttributes.getOauth2UserInfo().getSocialId())
                 .build();
+    }
+
+    public void setId(UUID uuid){
+        this.id = uuid;
+    }
+
+    public void setRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
     }
 }
