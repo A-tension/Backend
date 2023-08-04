@@ -1,7 +1,8 @@
 package com.b5f1.atention.domain.item.service;
 
 import com.b5f1.atention.domain.item.dto.CreateMyItemResponseDto;
-import com.b5f1.atention.domain.item.dto.GetMyItemResponseDto;
+import com.b5f1.atention.domain.item.dto.FindMyItemResponseDto;
+import com.b5f1.atention.domain.item.dto.FindAllItemsDto;
 import com.b5f1.atention.entity.Item;
 import com.b5f1.atention.entity.MyItem;
 import com.b5f1.atention.entity.User;
@@ -12,12 +13,16 @@ import java.util.UUID;
 
 public interface ItemService {
 
+    // 모든 종류의 아이템 타입 조회
+    public List<FindAllItemsDto> findAllItems();
 
-    // 모든 종류의 아이템 가져오기
-    public Set<Long> findAllItems();
+    // 아이템 타입
+
+    // 모든 종류의 아이템 가져오기 - 이름만 반환
+    public Set<Long> findAllItemNames();
 
     // 나의 보유 아이템 가져오기
-    public GetMyItemResponseDto findMyItemList(UUID userId);
+    public FindMyItemResponseDto findMyItemList(UUID userId);
 
     // 아이템 뽑기
     public CreateMyItemResponseDto createMyItem(UUID userId);

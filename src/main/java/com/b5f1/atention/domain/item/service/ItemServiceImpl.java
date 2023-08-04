@@ -1,8 +1,10 @@
 package com.b5f1.atention.domain.item.service;
 
 import com.b5f1.atention.domain.item.dto.CreateMyItemResponseDto;
-import com.b5f1.atention.domain.item.dto.GetMyItemResponseDto;
+import com.b5f1.atention.domain.item.dto.FindMyItemResponseDto;
+import com.b5f1.atention.domain.item.dto.FindAllItemsDto;
 import com.b5f1.atention.domain.item.repository.ItemRepository;
+import com.b5f1.atention.domain.item.repository.ItemTypeRepository;
 import com.b5f1.atention.domain.item.repository.MyItemRepository;
 import com.b5f1.atention.domain.user.repository.UserRepository;
 import com.b5f1.atention.entity.*;
@@ -21,14 +23,39 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final MyItemRepository myItemRepository;
     private final UserRepository userRepository;
+    private final ItemTypeRepository itemTypeRepository;
 
     /**
-     * 모든 아이템 조회 메서드
+     * 모든 아이템 조회 메서드 - 아이템 이름, 이미지, 설명 모두 나옴
+     *
+     * @return findAllItemDto<Item>
+     */
+
+
+    @Override
+    public List<FindAllItemsDto> findAllItems() {
+        List<Item> allItemList = itemRepository.findAll();
+        List<FindAllItemsDto> result = new ArrayList<>();
+        for (Item item : allItemList) {
+            FindAllItemsDto findAllItemsDto = FindAllItemsDto.builder()
+                    .name(item.getName())
+                    .image(item.getImage())
+                    .itemTypeId(item.getItemType().getId())
+                    .itemTypeName(item.getItemType().getName())
+                    .description(item.getItemType().getDescription())
+                    .build();
+            result.add(findAllItemsDto);
+        }
+        return result;
+    }
+
+    /**
+     * 모든 아이템 조회 메서드 - itemId만 반환함
      *
      * @return HashSet<Item>
      */
     @Override
-    public Set<Long> findAllItems() {
+    public Set<Long> findAllItemNames() {
         List<Item> allItemList = itemRepository.findAll();
         return allItemList.stream()
                 .map(Item::getId)
@@ -42,14 +69,14 @@ public class ItemServiceImpl implements ItemService {
      * @return GetMyItemResponseDto
      */
     @Override
-    public GetMyItemResponseDto findMyItemList(UUID userId) {
+    public FindMyItemResponseDto findMyItemList(UUID userId) {
         // userId로 user 찾고
         User user = findUserById(userId);
 
         // user와 연관관계가 있는 아이템 list 얻기
         List<MyItem> myItemList = user.getMyItemList();
 
-        GetMyItemResponseDto getMyItemResponseDto = GetMyItemResponseDto
+        FindMyItemResponseDto findMyItemResponseDto = FindMyItemResponseDto
                 .builder()
                 .myItemDtoList(new ArrayList<>())
                 .ticket(user.getTicket())
@@ -58,9 +85,9 @@ public class ItemServiceImpl implements ItemService {
         // 내 아이템 리스트에 있는 아이템들을 getMyItemResponseDto 형식에 맞게 담기
         for (MyItem myItem : myItemList) {
             Item item = myItem.getItem();
-            getMyItemResponseDto.addItemDto(item);
+            findMyItemResponseDto.addItemDto(item);
         }
-        return getMyItemResponseDto;
+        return findMyItemResponseDto;
     }
 
     /**
@@ -78,7 +105,7 @@ public class ItemServiceImpl implements ItemService {
         // save
         user = userRepository.save(user);
         // 전체 아이템 set
-        Set<Long> allItemSet = findAllItems();
+        Set<Long> allItemSet = this.findAllItemNames();
         List<MyItem> myItemList = user.getMyItemList();
         for (MyItem myItem : myItemList) {
             // 전체 아이템에서 내가 가진 아이템 번호만 제거

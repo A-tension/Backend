@@ -74,7 +74,7 @@ public class ItemTests {
         Long itemId3 = item3.getId();
 
         //then
-        Set<Long> allItemsSet = itemService.findAllItems();
+        Set<Long> allItemsSet = itemService.findAllItemNames();
         assertThat(allItemsSet.contains(itemId1)).isEqualTo(true);
         assertThat(allItemsSet.contains(itemId2)).isEqualTo(true);
         assertThat(allItemsSet.contains(itemId3)).isEqualTo(true);

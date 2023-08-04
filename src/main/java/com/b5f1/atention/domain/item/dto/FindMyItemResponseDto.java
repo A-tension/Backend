@@ -1,8 +1,6 @@
 package com.b5f1.atention.domain.item.dto;
 
 import com.b5f1.atention.entity.Item;
-import com.b5f1.atention.entity.MyItem;
-import com.b5f1.atention.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +12,7 @@ import java.util.List;
 @Getter @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetMyItemResponseDto {
+public class FindMyItemResponseDto {
 
     // 이이템 리스트
     // 기본적으로 초기화 하고 싶으면 Builder.Default 사용 필요
