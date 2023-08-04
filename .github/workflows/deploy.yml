@@ -32,7 +32,7 @@ jobs:
         run: echo "${{ secrets.ENV }}" >> .env
 
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: ./gradlew build
 
         # Image Tagging
       - name: Docker meta
