@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.cors.CorsUtils;
 
 @Configuration
 @EnableWebSecurity
@@ -58,6 +59,8 @@ public class SecurityConfig {
                 .antMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
                 // 회원가입 접근 가능 자체 회원 가입이 없으니 빼도 될 거 같음
                 .antMatchers("/sign-up").permitAll()
+                // CORS 세팅
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 //Swagger URL 허용
                 .antMatchers(swaggerPatterns).permitAll()
                 // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
