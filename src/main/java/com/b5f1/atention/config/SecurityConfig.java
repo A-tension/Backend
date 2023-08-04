@@ -48,7 +48,6 @@ public class SecurityConfig {
 
                 // 세션 사용하지 않으므로 세션 정책을 STATELESS로 설정
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
                 .and()
 
                 //인증/인가 설정 시 HttpServletRequest를 이용
@@ -60,14 +59,14 @@ public class SecurityConfig {
                 .antMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
                 // 회원가입 접근 가능 자체 회원 가입이 없으니 빼도 될 거 같음
                 .antMatchers("/sign-up").permitAll()
-
                 // CORS 세팅
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                // Swagger 추가
+                //Swagger URL 허용
                 .antMatchers(swaggerPatterns).permitAll()
                 // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
                 .anyRequest().authenticated()
                 .and()
+
                 //== 소셜 로그인 설정 ==//
                 .oauth2Login()
                 // 동의하고 계속하기를 눌렀을 때 Handler 설정
@@ -89,7 +88,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
         JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, userRepository);
         return jwtAuthenticationFilter;
