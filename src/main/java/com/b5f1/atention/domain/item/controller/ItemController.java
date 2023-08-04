@@ -30,10 +30,10 @@ public class ItemController {
 
    // TODO
     @GetMapping
-    @Operation(summary= "전체 아이템 타입 조회", description = "전체 아이템 타입을 조회하는 API입니다.")
+    @Operation(summary= "전체 아이템 조회", description = "전체 아이템을 조회하는 API입니다. 아이템 타입 및 설명도 담겨있습니다")
     public ResponseEntity<MessageWithData> findAllItemType() {
         List<FindAllItemsDto> data = itemService.findAllItems();
-        return new ResponseEntity<>(new MessageWithData("전체 아이템 타입이 조회되었습니다", data), HttpStatus.OK);
+        return new ResponseEntity<>(new MessageWithData("전체 아이템이 조회되었습니다", data), HttpStatus.OK);
     }
 
     @PostMapping
@@ -43,7 +43,7 @@ public class ItemController {
         return new ResponseEntity<>(new MessageWithData("랜덤 아이템이 생성되었습니다.", data), HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/{userId}")
     @Operation(summary = "보유 아이템 조회", description = "본인이 보유한 아이템을 전체 조회하는 API입니다")
     public ResponseEntity<MessageWithData> findMyItemList(Authentication authentication) {
         FindMyItemResponseDto data = itemService.findMyItemList(UUID.fromString(authentication.getName()));
