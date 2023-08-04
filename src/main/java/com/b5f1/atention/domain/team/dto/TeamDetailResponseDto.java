@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class TeamDetailResponseDto {
-
+    // Team
     // 팀 고유 식별값
     private Long teamId;
     // 팀 이름
@@ -22,6 +22,7 @@ public class TeamDetailResponseDto {
     private String profileImage;
     // 팀 소개
     private String description;
+    // User
     // 유저 프로필 관련 데이터 (userId, name, profileImage)
     private List<UserProfileDto> userProfileDtoList;
 

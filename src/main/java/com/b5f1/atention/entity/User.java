@@ -1,6 +1,6 @@
 package com.b5f1.atention.entity;
 
-import com.b5f1.atention.entity.enums.LoginWith;
+import com.b5f1.atention.entity.enums.SocialType;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -31,10 +31,6 @@ public class User extends BaseEntity {
     @Column
     private String profileImage;
 
-    @Column(name = "oauth")
-    @Enumerated(value = EnumType.STRING)
-    private LoginWith oAuth;
-
     @Column
     @Builder.Default
     private int ticket = 0;
@@ -49,4 +45,31 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     @Builder.Default
     private List<MyItem> myItemList = new ArrayList<>();
+
+    // KAKAO, NAVER, GOOGLE
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
+
+    // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
+    private String socialId;
+
+    private String refreshToken;
+
+    public void updateName(String name){
+        this.name = name;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    // 티켓 획득 메서드
+    public void addTicket() {
+        this.ticket ++;
+    }
+
+    // 티켓 사용 메서드
+    public void useTicket() {
+        this.ticket --;
+    }
 }
