@@ -100,11 +100,11 @@ public class ItemTests {
         // optional 쓰는 대신 orElseThrow해주면 optional<Item>이 아닌 item으로 사용가능
         Item item1 = itemRepository.findByNameAndIsDeletedFalse(myItemCreateResponseDto.getName())
                 .orElseThrow(() -> new RuntimeException("해당 아이템을 찾을 수 없습니다"));
-        myItemList.add(new MyItem().builder().item(item1).user(user1).build());
+        myItemList.add(myItemRepository.save(MyItem.builder().item(item1).user(user1).build()));
         myItemCreateResponseDto = itemService.createMyItem(user1.getId());
         Item item2 = itemRepository.findByNameAndIsDeletedFalse(myItemCreateResponseDto.getName())
                 .orElseThrow(() -> new RuntimeException("해당 아이템을 찾을 수 없습니다"));
-        myItemList.add(new MyItem().builder().item(item2).user(user1).build());
+        myItemList.add(myItemRepository.save(MyItem.builder().item(item2).user(user1).build()));
 //        System.out.println(item1.getName());
 //        System.out.println(item2.getName());
         //when
