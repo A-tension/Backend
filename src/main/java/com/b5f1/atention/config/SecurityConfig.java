@@ -25,6 +25,13 @@ public class SecurityConfig {
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
 
+    private static final String[] swaggerPatterns = {
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+            "/v2/api-docs",
+            "/webjars/**"
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -52,6 +59,8 @@ public class SecurityConfig {
                 .antMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
                 // 회원가입 접근 가능 자체 회원 가입이 없으니 빼도 될 거 같음
                 .antMatchers("/sign-up").permitAll()
+
+                .antMatchers(swaggerPatterns).permitAll()
                 // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
                 .anyRequest().authenticated()
                 .and()
