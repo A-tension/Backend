@@ -1,6 +1,6 @@
 package com.b5f1.atention.domain.item.service;
 
-import com.b5f1.atention.domain.item.dto.MyItemCreateResponseDto;
+import com.b5f1.atention.domain.item.dto.CreateMyItemResponseDto;
 import com.b5f1.atention.domain.item.dto.GetMyItemResponseDto;
 import com.b5f1.atention.domain.item.repository.ItemRepository;
 import com.b5f1.atention.domain.item.repository.MyItemRepository;
@@ -24,6 +24,7 @@ public class ItemServiceImpl implements ItemService {
 
     /**
      * 모든 아이템 조회 메서드
+     *
      * @return HashSet<Item>
      */
     @Override
@@ -36,6 +37,7 @@ public class ItemServiceImpl implements ItemService {
 
     /**
      * 나의 보유 아이템 목록 조회 메서드
+     *
      * @param userId
      * @return GetMyItemResponseDto
      */
@@ -63,36 +65,40 @@ public class ItemServiceImpl implements ItemService {
 
     /**
      * 아이템 뽑기 메서드
+     *
      * @param userId
      * @return MyItemCreateResponseDto
      */
     @Override
-    public MyItemCreateResponseDto createMyItem(UUID userId) {
+    public CreateMyItemResponseDto createMyItem(UUID userId) {
         // userId로 user 찾고
         User user = findUserById(userId);
         // ticket 사용(차감)
         user.useTicket();
         // save
-        userRepository.save(user);
+        user = userRepository.save(user);
         // 전체 아이템 set
         Set<Long> allItemSet = findAllItems();
         List<MyItem> myItemList = user.getMyItemList();
         for (MyItem myItem : myItemList) {
             // 전체 아이템에서 내가 가진 아이템 번호만 제거
-            allItemSet.remove(myItem.getItem().getId());
+            Long itemTypeId = myItem.getItem().getItemType().getId();
+            if (itemTypeId != 1L && itemTypeId != 2L) {
+                allItemSet.remove(itemTypeId);
+            }
         }
         // 랜덤 숫자
         // 남은 아이템 중 (랜덤 숫자)번째 아이템을 뽑게 된다
         // Random().nextInt(n) : 0 ~ n - 1
-        Long randomNumber = (long)new Random().nextInt(allItemSet.size());
-        Long i = 0L;
+        long randomNumber = (long) new Random().nextInt(allItemSet.size());
+        long i = 0L;
         Long newItemNumber = null;
         for (Long itemNumber : allItemSet) {
             if (i == randomNumber) {
                 newItemNumber = itemNumber;
                 break;
             }
-            i ++;
+            i++;
         }
         // 새로 뽑힌 아이템
         Item newItem = findItemById(newItemNumber);
@@ -100,7 +106,7 @@ public class ItemServiceImpl implements ItemService {
         // createMyItem 메서드로 user의 MyItemList에 update해줌과 동시에
         // db 저장
         myItemRepository.save(new MyItem().createMyItem(user, newItem));
-        return MyItemCreateResponseDto.builder()
+        return CreateMyItemResponseDto.builder()
                 .name(newItem.getName())
                 .image(newItem.getImage())
                 .build();
@@ -108,11 +114,13 @@ public class ItemServiceImpl implements ItemService {
 
     /**
      * 아이템 사용 메서드
+     *
      * @param userId, itemId
      */
     @Override
     public void useItem(UUID userId, Long itemId) {
-        MyItem useMyItem = findMyItemByUserIdAndItemId(userId, itemId);
+        List<MyItem> myItemList = findMyItemByUserIdAndItemId(userId, itemId);
+        MyItem useMyItem = myItemList.get(0);
         Long itemTypeId = useMyItem.getItem().getItemType().getId();
         if (itemTypeId == 1 || itemTypeId == 2) {
             useMyItem.deleted();
@@ -141,11 +149,10 @@ public class ItemServiceImpl implements ItemService {
     // userId로 사용자 찾고, itemId로 아이템 찾고, 없으면 throw Exception
     // 추후에 Exception 변경 예정
     @Override
-    public MyItem findMyItemByUserIdAndItemId(UUID userId, Long itemId) {
+    public List<MyItem> findMyItemByUserIdAndItemId(UUID userId, Long itemId) {
         User user = findUserById(userId);
         Item item = findItemById(itemId);
-        return myItemRepository.findByUserAndItemAndIsDeletedFalse(user, item)
-                .orElseThrow(() -> new RuntimeException("해당하는 아이템을 찾을 수 없습니다"));
+        return myItemRepository.findByUserAndItemAndIsDeletedFalse(user, item);
     }
 
 }

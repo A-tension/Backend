@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MyItemCreateResponseDto {
+public class CreateMyItemResponseDto {
 
     // 아이템 이름
     private String name;
