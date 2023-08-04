@@ -17,6 +17,8 @@ import java.util.List;
 public class GetMyItemResponseDto {
 
     // 이이템 리스트
+    // 기본적으로 초기화 하고 싶으면 Builder.Default 사용 필요
+    @Builder.Default
     List<MyItemDto> myItemDtoList = new ArrayList<>();
     // 티켓 개수
     private int ticket;
