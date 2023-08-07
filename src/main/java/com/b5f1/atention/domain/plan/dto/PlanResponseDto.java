@@ -13,8 +13,6 @@ import java.util.UUID;
 public class PlanResponseDto {
     // 일정 ID
     private Long id;
-    // 유저 ID
-    private UUID userId;
     // 팀 ID
     private Long teamId;
     // 일정 제목
@@ -25,8 +23,6 @@ public class PlanResponseDto {
     private LocalDateTime endTime;
     // 일정 상세
     private String description;
-    // 유저 이름
-    private String userName;
     // 팀 이름
     private String teamName;
     // 프로필 이미지 경로
