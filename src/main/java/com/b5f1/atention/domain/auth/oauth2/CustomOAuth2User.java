@@ -10,8 +10,8 @@ import java.util.UUID;
 
 @Getter
 public class CustomOAuth2User extends DefaultOAuth2User {
-    private UUID id;
-
+    private String accessToken;
+    private String refreshToken;
     /**
      * Constructs a {@code DefaultOAuth2User} using the provided parameters.
      *
@@ -23,9 +23,11 @@ public class CustomOAuth2User extends DefaultOAuth2User {
     public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities,
                             Map<String, Object> attributes,
                             String nameAttributeKey,
-                            UUID id) {
+                            String accessToken,
+                            String refreshToken) {
         super(authorities, attributes, nameAttributeKey);
-        this.id = id;;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
 }
