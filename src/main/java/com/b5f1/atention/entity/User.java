@@ -1,5 +1,6 @@
 package com.b5f1.atention.entity;
 
+import com.b5f1.atention.domain.user.dto.UserProfileUpdateDto;
 import com.b5f1.atention.entity.enums.SocialType;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -70,5 +71,11 @@ public class User extends BaseEntity {
     // 티켓 사용 메서드
     public void useTicket() {
         this.ticket --;
+    }
+
+    public User updateUser(UserProfileUpdateDto userProfileUpdateDto) {
+        this.name = userProfileUpdateDto.getName();
+        this.profileImage = userProfileUpdateDto.getProfileImage();
+        return this;
     }
 }
