@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService{
         List<TeamParticipant> teamParticipantList = teamParticipantRepository.findAllByUserAndIsDeletedFalse(user);
         for (TeamParticipant teamParticipant : teamParticipantList) {
             Team team = teamParticipant.getTeam();
-            teamParticipant.deleteTeamParticipant(user, team);
+            teamParticipantRepository.delete(teamParticipant.deleteTeamParticipant(user, team));
         }
         user.deleted();
         userRepository.saveAndFlush(user);
