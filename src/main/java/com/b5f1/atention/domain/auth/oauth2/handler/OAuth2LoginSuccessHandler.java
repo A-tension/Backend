@@ -36,9 +36,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     // 소셜 로그인 성공 시 생성한 access/refreshToken 응답 헤더에 담아 사용자에게 전달
     private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User) throws IOException {
-        String accessToken = oAuth2User.getAccessToken();
-        String refreshToken = oAuth2User.getRefreshToken();
-
+        String accessToken = jwtService.createAccessToken(oAuth2User.getId());
+        String refreshToken = jwtService.createRefreshToken(oAuth2User.getId());
+        System.out.println(accessToken);
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+        jwtService.updateRefreshToken(oAuth2User.getId(), refreshToken);
     }
 }

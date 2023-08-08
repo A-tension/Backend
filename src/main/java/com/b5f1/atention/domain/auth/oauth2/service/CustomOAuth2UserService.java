@@ -46,33 +46,23 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         //4) DefaultOAuth2User를 상속받는 CustomOAuth2User를 생성할 때 필수 매개변수
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
-        log.info("userNameAttributeName : " + userNameAttributeName);
+        log.debug("userNameAttributeName : " + userNameAttributeName);
         //"userNameAttributeName : sub"
 
         //5) OAuth Provider에게 제공받은 사용자 attribute
         Map<String, Object> attributes = oAuth2User.getAttributes();
-        log.info("attributes : " + attributes);
+        log.debug("attributes : " + attributes);
         //attributes : {sub=103151414792709319215, name=김기정, given_name=기정, family_name=김, picture=https://lh3.googleusercontent.com/a/AAcHTtdcIh1LXjllo_2m6wgWvTu4VEog7kpCHfEsJdF6x-VG=s96-c, email=dlsgkrlwjd@gmail.com, email_verified=true, locale=ko}
 
         //6) 각 social 타입별로 필요한 값만 추출한 attributes
         OAuthAttributes extractAttributes = OAuthAttributes.of(socialType, attributes);
 
-        UUID uuid = UUID.randomUUID();
-        String accessToken = jwtService.createAccessToken(uuid);
-        String refreshToken = jwtService.createRefreshToken(uuid);
-
-        extractAttributes.setId(uuid);
-        extractAttributes.setRefreshToken(refreshToken);
-
-        saveUser(extractAttributes, socialType);
-
-        log.info("accessToken : " + accessToken);
+        User createdUser = getUser(extractAttributes, socialType);
 
         return new CustomOAuth2User(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
                 attributes,
                 userNameAttributeName,
-                accessToken,
-                refreshToken);
+                createdUser.getId());
     }
 
     private SocialType getSocialType(String registrationId) {
@@ -86,21 +76,23 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     // 로그인 유저 DB에 저장
-    private void saveUser(OAuthAttributes attributes, SocialType socialType){
+    private User getUser(OAuthAttributes attributes, SocialType socialType){
 
         User findUser = userRepository.findBySocialTypeAndSocialId(socialType,
                 attributes.getOauth2UserInfo().getSocialId()).orElse(null);
 
         // 로그인 경험이 없는 신규 유저만 DB에 저장
         if (findUser == null) {
-            User createdUser = attributes.toEntity(socialType, attributes);
-            User ret = userRepository.save(createdUser);
-            log.info("uuid1 : " + ret.getId());
-        }
-        // 로그인 경험이 있는 기존 유저의 경우에도 refreshToken은 갱신
-        else {
-            jwtService.updateRefreshToken(attributes.getId(), attributes.getRefreshToken());
+            return saveUser(attributes, socialType);
         }
 
+        return findUser;
+
+    }
+
+    private User saveUser(OAuthAttributes attributes, SocialType socialType) {
+        attributes.setId(UUID.randomUUID());
+        User createdUser = attributes.toEntity(socialType, attributes);
+        return userRepository.save(createdUser);
     }
 }
