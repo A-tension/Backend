@@ -85,11 +85,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         if (findUser == null) {
             return saveUser(attributes, socialType);
         }
-        // 로그인 경험이 있는 기존 유저의 경우에도 refreshToken은 갱신
-        else {
-            jwtService.updateRefreshToken(attributes.getId(), attributes.getRefreshToken());
-            return findUser;
-        }
+
+        return findUser;
+
     }
 
     private User saveUser(OAuthAttributes attributes, SocialType socialType) {
