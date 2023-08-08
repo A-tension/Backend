@@ -1,7 +1,10 @@
 package com.b5f1.atention.domain.auth.jwt;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.Verification;
 import com.b5f1.atention.domain.user.repository.UserRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +47,7 @@ public class JwtService {
     // email 내용을 담을 클레임 이름
     private static final String EMAIL_CLAIM = "email";
     // 토큰 추출을 위한 프리픽스
-    private static final String BEARER = "Bearer";
+    private static final String BEARER = "Bearer ";
 
     // 사용자 데이터에 접근하기 위한 리포지토리
     private final UserRepository userRepository;
@@ -54,13 +57,22 @@ public class JwtService {
         Date now = new Date();
         // JWT 토큰을 생성하는 빌더 반환
         // create메서드는 라이브러리 내부상 static으로 선언되어 있음.
-        return JWT.create()
+        String accessToken = JWT.create()
                 // JWT의 Subject 지정 -> AccessToken이므로 AccessToken
                 .withSubject(uuid.toString())
                 // 토큰 만료 시간 설정
                 .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
                 // HMAC512 알고리즘 사용, application-jwt.yml에서 지정한 secret 키로 암호화
                 .sign(Algorithm.HMAC512(secretKey));
+        System.out.println(accessToken);
+        return accessToken;
+//        return JWT.create()
+                // JWT의 Subject 지정 -> AccessToken이므로 AccessToken
+//                .withSubject(uuid.toString())
+                // 토큰 만료 시간 설정
+//                .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
+                // HMAC512 알고리즘 사용, application-jwt.yml에서 지정한 secret 키로 암호화
+//                .sign(Algorithm.HMAC512(secretKey));
     }
 
     /**
@@ -90,6 +102,9 @@ public class JwtService {
 
         setAccessTokenHeader(response, "Bearer " + accessToken);
         setRefreshTokenHeader(response, "Bearer " + refreshToken);
+        log.info(response.getHeader(accessHeader));
+        log.info("accessToken " + accessToken);
+        log.info("refreshToken " + refreshToken);
         log.debug("Access Token, Refresh Token 헤더 설정 완료");
     }
 
@@ -148,18 +163,20 @@ public class JwtService {
      * 유효하지 않다면 빈 Optional 객체 반환
      */
     public Optional<String> extractUUID(String accessToken) {
+        System.out.println(accessToken);
         try {
+            Verification require = JWT.require(Algorithm.HMAC512(secretKey));
+
             // 토큰 유효성 검사하는 데에 사용할 알고리즘이 있는 JWT verifier builder 반환
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
                     // 반환된 빌더로 JWT verifier 생성
                     .build()
                     // accessToken을 검증하고 유효하지 않다면 예외 발생
                     .verify(accessToken)
-                    // claim(Email) 가져오기
-                    .getClaim(EMAIL_CLAIM)
-                    //JSON to String ex) {email : cjdfidrlwjd@naver.com } -> "cjdfidrlwjd@naver.com"
-                    .asString());
+                    // sub 가져오기
+                    .getSubject());
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("액세스 토큰이 유효하지 않습니다.");
             return Optional.empty();
         }
