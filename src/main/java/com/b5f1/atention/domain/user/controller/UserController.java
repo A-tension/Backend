@@ -4,7 +4,9 @@ import com.b5f1.atention.common.MessageOnly;
 import com.b5f1.atention.common.MessageWithData;
 import com.b5f1.atention.domain.user.dto.UserProfileUpdateDto;
 import com.b5f1.atention.domain.user.dto.UserResponseDto;
+import com.b5f1.atention.domain.user.repository.UserRepository;
 import com.b5f1.atention.domain.user.service.UserService;
+import com.b5f1.atention.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -22,6 +25,7 @@ import java.util.UUID;
 @Api(tags = "유저")
 @RequiredArgsConstructor
 public class UserController {
+    private final UserRepository userRepository;
 
     private final UserService userService;
 
@@ -45,5 +49,11 @@ public class UserController {
     public ResponseEntity<MessageOnly> deleteUser(Authentication authentication) {
         userService.deleteUser(UUID.fromString(authentication.getName()));
         return new ResponseEntity<>(new MessageOnly("유저 탈퇴가 성공하였습니다."), HttpStatus.OK);
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<MessageWithData> test() {
+        List<User> data = userRepository.findAll();
+        return new ResponseEntity<>(new MessageWithData("TEST", data), HttpStatus.OK);
     }
 }
