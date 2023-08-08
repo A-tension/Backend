@@ -9,17 +9,22 @@ import com.b5f1.atention.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig { // WebSecurityConfigurerAdapter : Spring Security 5.7.0v 부터 deprecated
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
@@ -36,6 +41,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                //Spring Security 전에 선행되는 CorsFilter를 Security에 통합
+                .cors()
+                .and()
                 // HTML <form>을 통해 아이디 비밀번호를 제공하여 로그인하는 방식이 아니므로 disable
                 .formLogin().disable() // FormLogin 사용 X
                 // JWT 토큰 로그인(Bearer)방식을 사용할 것이므로 browser가 제공하는 기본 사용자 인증 disable
@@ -58,9 +66,7 @@ public class SecurityConfig {
                 // 기본 페이지, css, image, js 하위 폴더에 있는 자료들은 모두 접근 가능, h2-console에 접근 가능
                 .antMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
                 // 회원가입 접근 가능 자체 회원 가입이 없으니 빼도 될 거 같음
-                .antMatchers("/sign-up").permitAll()
-                // CORS 세팅
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .antMatchers("/login", "/oauth2").permitAll()
                 //Swagger URL 허용
                 .antMatchers(swaggerPatterns).permitAll()
                 // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
@@ -74,9 +80,9 @@ public class SecurityConfig {
                 // 소셜 로그인 실패 시 핸들러 설정
                 .failureHandler(oAuth2LoginFailureHandler)
                 /*
-                * Spring Security 내장 필터 OAuth2LoginAuthenticationFilter가
-                * OAuth 2.0 인증 공급자에게 사용자 정보를 가져올 때 사용할 서비스 지정
-                * */
+                 * Spring Security 내장 필터 OAuth2LoginAuthenticationFilter가
+                 * OAuth 2.0 인증 공급자에게 사용자 정보를 가져올 때 사용할 서비스 지정
+                 * */
                 .userInfoEndpoint().userService(customOAuth2UserService);
 
 
@@ -91,5 +97,15 @@ public class SecurityConfig {
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
         JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, userRepository);
         return jwtAuthenticationFilter;
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("https://127.0.0.1:5173"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST", "OPTIONS"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

@@ -91,7 +91,7 @@ spring:
 
 logging:
   level:
-    root: info
+    root: debug
 
 jwt:
   secretKey: ${JWT_PWD}
