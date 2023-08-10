@@ -34,7 +34,7 @@ import java.util.UUID;
 @Slf4j
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
-    private static final String NO_CHECK_LOGIN_URL = "/user/login"; // "/login"으로 들어오는 요청은 Filter 작동 X
+    private static final String NO_CHECK_LOGIN_URL = "/login"; // "/login"으로 들어오는 요청은 Filter 작동 X
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -121,6 +121,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     public void saveAuthentication(User myUser) {
         //UserDetails : 인증 객체로 캡슐화되는 사용자 정보를 저장하는데 사용되는 객체
+        log.debug("saveAuthentication() 호출");
         UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
                 .username(myUser.getId().toString())
                 .password("")
