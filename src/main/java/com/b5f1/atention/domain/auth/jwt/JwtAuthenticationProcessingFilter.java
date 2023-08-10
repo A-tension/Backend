@@ -34,7 +34,7 @@ import java.util.UUID;
 @Slf4j
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
-    private static final String NO_CHECK_LOGIN_URL = "/login"; // "/login"으로 들어오는 요청은 Filter 작동 X
+    private static final String NO_CHECK_LOGIN_URL = "/oauth2/authorization"; // "/login"으로 들어오는 요청은 Filter 작동 X
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -44,7 +44,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // "/login" 요청이 들어오면, 인증/인가 처리할 필요 없으므로 다음 필터 호출
-        if (request.getRequestURI().equals(NO_CHECK_LOGIN_URL)) {
+        if (request.getRequestURI().contains(NO_CHECK_LOGIN_URL)) {
             filterChain.doFilter(request, response);
             // return으로 이후 현재 필터 진행 막기 (안해주면 아래로 내려가서 계속 필터 진행시킴)
             return;

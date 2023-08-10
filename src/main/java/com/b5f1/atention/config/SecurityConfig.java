@@ -9,7 +9,6 @@ import com.b5f1.atention.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,9 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -61,12 +59,13 @@ public class SecurityConfig { // WebSecurityConfigurerAdapter : Spring Security 
                 //인증/인가 설정 시 HttpServletRequest를 이용
                 .authorizeRequests()
 
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 //== URL별 권한 관리 옵션 ==//
 
                 // 기본 페이지, css, image, js 하위 폴더에 있는 자료들은 모두 접근 가능, h2-console에 접근 가능
                 .antMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
                 // 회원가입 접근 가능 자체 회원 가입이 없으니 빼도 될 거 같음
-                .antMatchers("/login", "/oauth2").permitAll()
+                .antMatchers("/login/**", "/oauth2/**").permitAll()
                 //Swagger URL 허용
                 .antMatchers("/user/**").permitAll()
                 .antMatchers(swaggerPatterns).permitAll()
@@ -104,15 +103,10 @@ public class SecurityConfig { // WebSecurityConfigurerAdapter : Spring Security 
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        //로컬 react 개발 환경
+        configuration.setAllowCredentials(true); // axios에서 withCredentials:true로 설정한 경우 필수
         configuration.addAllowedOriginPattern("*");
-        //서버 react 프론트 환경
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-        configuration.addExposedHeader("x-auth-token");
-        //내 서버의 응답 json 을 javascript에서 처리할수 있게 하는것(axios 등)
-        configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
         source.registerCorsConfiguration("/**", configuration);
