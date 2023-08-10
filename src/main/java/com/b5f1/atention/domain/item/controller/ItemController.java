@@ -6,7 +6,6 @@ import com.b5f1.atention.domain.item.dto.CreateMyItemResponseDto;
 import com.b5f1.atention.domain.item.dto.FindAllItemsDto;
 import com.b5f1.atention.domain.item.dto.FindMyItemResponseDto;
 import com.b5f1.atention.domain.item.service.ItemService;
-import com.b5f1.atention.entity.ItemType;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,7 @@ public class ItemController {
    // TODO
     @GetMapping
     @Operation(summary= "전체 아이템 조회", description = "전체 아이템을 조회하는 API입니다. 아이템 타입 및 설명도 담겨있습니다")
-    public ResponseEntity<MessageWithData> findAllItemType() {
+    public ResponseEntity<MessageWithData> findAllItems() {
         List<FindAllItemsDto> data = itemService.findAllItems();
         return new ResponseEntity<>(new MessageWithData("전체 아이템이 조회되었습니다", data), HttpStatus.OK);
     }
