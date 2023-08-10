@@ -40,7 +40,7 @@ public class SecurityConfig { // WebSecurityConfigurerAdapter : Spring Security 
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 //Spring Security 전에 선행되는 CorsFilter를 Security에 통합
-                .cors()
+                .cors().configurationSource(corsConfigurationSource())
                 .and()
                 // HTML <form>을 통해 아이디 비밀번호를 제공하여 로그인하는 방식이 아니므로 disable
                 .formLogin().disable() // FormLogin 사용 X
@@ -104,7 +104,7 @@ public class SecurityConfig { // WebSecurityConfigurerAdapter : Spring Security 
         CorsConfiguration configuration = new CorsConfiguration();
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         configuration.setAllowCredentials(true); // axios에서 withCredentials:true로 설정한 경우 필수
-        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOriginPattern("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setMaxAge(3600L);
