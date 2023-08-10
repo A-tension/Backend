@@ -3,6 +3,7 @@ package com.b5f1.atention.domain.user.service;
 import com.b5f1.atention.domain.team.repository.TeamParticipantRepository;
 import com.b5f1.atention.domain.user.dto.UserProfileUpdateDto;
 import com.b5f1.atention.domain.user.dto.UserResponseDto;
+import com.b5f1.atention.domain.user.dto.UserSearchResponseDto;
 import com.b5f1.atention.domain.user.repository.UserRepository;
 import com.b5f1.atention.entity.Team;
 import com.b5f1.atention.entity.TeamParticipant;
@@ -11,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,6 +61,17 @@ public class UserServiceImpl implements UserService{
     public UserResponseDto updateUserProfile(UUID userId, UserProfileUpdateDto userProfileUpdateDto) {
         User user = userRepository.save(findUserById(userId).updateUser(userProfileUpdateDto));
         return new UserResponseDto().toUserResponseDto(user);
+    }
+
+    public List<UserSearchResponseDto> searchUser(String keyword) {
+        // TODO
+        //  유저가 팀에 참여하고 있는 경우 보여주지 않는 로직 추가하면 좋을 듯
+        List<User> userList = userRepository.findByNameContainingOrEmailContainingAndIsDeletedFalse(keyword, keyword);
+        List<UserSearchResponseDto> searchUserList = new ArrayList<>();
+        for (User user : userList) {
+            searchUserList.add(new UserSearchResponseDto().toUserResponseDto(user));
+        }
+        return searchUserList;
     }
 
     // userId로 유저를 찾고, 없으면 throw Exception
