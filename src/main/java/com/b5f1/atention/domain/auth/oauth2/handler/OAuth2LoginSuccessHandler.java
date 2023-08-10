@@ -5,8 +5,11 @@ import com.b5f1.atention.domain.auth.oauth2.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +22,7 @@ import java.io.IOException;
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
-
+    private final RedirectStrategy redirectStratgy = new DefaultRedirectStrategy();
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -28,18 +31,22 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         try {
             CustomOAuth2User oAuth2User = (CustomOAuth2User)authentication.getPrincipal();
             // 로그인에 성공한 경우 access, refresh 토큰 생성
-            loginSuccess(response, oAuth2User);
+            loginSuccess(request, response, oAuth2User);
         } catch (Exception e) {
+            e.printStackTrace();
             throw e;
         }
     }
 
     // 소셜 로그인 성공 시 생성한 access/refreshToken 응답 헤더에 담아 사용자에게 전달
-    private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User) throws IOException {
+    private void loginSuccess(HttpServletRequest request, HttpServletResponse response, CustomOAuth2User oAuth2User) throws IOException, ServletException {
         String accessToken = jwtService.createAccessToken(oAuth2User.getId());
         String refreshToken = jwtService.createRefreshToken(oAuth2User.getId());
-        System.out.println(accessToken);
-        jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         jwtService.updateRefreshToken(oAuth2User.getId(), refreshToken);
+        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:5173/oauth2/redirect")
+                .queryParam("accessToken", accessToken)
+                .queryParam("refreshToken", refreshToken)
+                .build().toUriString();
+        redirectStratgy.sendRedirect(request, response, targetUrl);
     }
 }
