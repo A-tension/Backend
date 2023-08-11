@@ -56,7 +56,7 @@ public class UserController {
     @Operation(summary = "회원 검색", description = "회원 검색 요청 API 입니다.")
     public ResponseEntity<MessageWithData> searchUser(@PathVariable String keyword) {
         List<UserSearchResponseDto> userSearchResponseDtoList = userService.searchUser(keyword);
-        return new ResponseEntity<>(new MessageWithData("유저 검색에 성공하였습니다.", userSearchResponseDtoList), HttpStatus.OK)
+        return new ResponseEntity<>(new MessageWithData("유저 검색에 성공하였습니다.", userSearchResponseDtoList), HttpStatus.OK);
     }
 
     @GetMapping("/test")
