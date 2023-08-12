@@ -5,6 +5,7 @@ import com.b5f1.atention.domain.team.repository.TeamParticipantRepository;
 import com.b5f1.atention.domain.team.service.TeamService;
 import com.b5f1.atention.domain.user.dto.UserProfileUpdateDto;
 import com.b5f1.atention.domain.user.dto.UserResponseDto;
+import com.b5f1.atention.domain.user.dto.UserSearchResponseDto;
 import com.b5f1.atention.domain.user.repository.UserRepository;
 import com.b5f1.atention.domain.user.service.UserService;
 import com.b5f1.atention.entity.TeamParticipant;
@@ -122,5 +123,13 @@ public class UserTest {
         assertThat(deletedUser.getTeamParticipantList().size()).isEqualTo(0);
         assertThat(teamParticipantRepository.findByUser(deletedUser)).isEqualTo(Optional.empty());
 
+    }
+
+    @Test
+    public void searchTest() throws Exception {
+        List<UserSearchResponseDto> searchResponseDtoList = userService.searchUser("k");
+        for (UserSearchResponseDto user : searchResponseDtoList) {
+            System.out.println(user.getEmail() + " " + user.getName());
+        }
     }
 }
