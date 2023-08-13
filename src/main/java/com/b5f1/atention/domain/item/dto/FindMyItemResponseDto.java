@@ -23,10 +23,12 @@ public class FindMyItemResponseDto {
 
     // 아이템 추가 메서드
     public void addItemDto(Item item) {
-        // user를 여기서 받아도 되는데 ㅇ왜 여기서는 item을 받을까?
+        // user를 여기서 받아도 되는데 ㅇ왜 여기서는 item을 받을까? -> 아래처럼 해도 됨
         MyItemDto myItemDto = MyItemDto.builder()
                 .name(item.getName())
                 .image(item.getImage())
+                .itemTypeName(item.getItemType().getName())
+                .itemTypeId(item.getItemType().getId())
                 .description(item.getItemType().getDescription())
                 .build();
         this.myItemDtoList.add(myItemDto);
