@@ -13,4 +13,5 @@ public class UserProfileUpdateDto {
 
     private String name;
     private String profileImage;
+    private String meetingUrl;
 }
