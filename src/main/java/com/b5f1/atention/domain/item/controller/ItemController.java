@@ -49,6 +49,8 @@ public class ItemController {
         return new ResponseEntity<>(new MessageWithData("나의 보유 아이템이 조회 되었습니다.", data), HttpStatus.OK);
     }
 
+
+
     // PathVariable 혹은 RequestBody
     @DeleteMapping("/{itemId}")
     @Operation(summary = "아이템 사용", description = "아이템을 삭제하는 API입니다")
