@@ -40,7 +40,7 @@ public class UserController {
 
     @PutMapping
     @Operation(summary = "내 정보 수정", description = "내 정보 수정 요청 API 입니다.")
-    public ResponseEntity<MessageWithData> updateUserProfile(Authentication authentication, UserProfileUpdateDto userProfileUpdateDto) {
+    public ResponseEntity<MessageWithData> updateUserProfile(Authentication authentication, @RequestBody UserProfileUpdateDto userProfileUpdateDto) {
         UserResponseDto data = userService.updateUserProfile(UUID.fromString(authentication.getName()), userProfileUpdateDto);
         return new ResponseEntity<>(new MessageWithData("내 정보 변경이 성공하였습니다.", data), HttpStatus.OK);
     }
