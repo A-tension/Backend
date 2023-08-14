@@ -69,9 +69,9 @@ public class TeamController {
         return new ResponseEntity<>(new MessageOnly("팀 초대가 성공하였습니다."), HttpStatus.OK);
     }
 
-    @PostMapping("/accept")
+    @PostMapping("/accept/{teamId}")
     @Operation(summary = "팀 초대 수락", description = "팀 초대 수락 요청 API 입니다.")
-    public ResponseEntity<MessageOnly> acceptTeam(Authentication authentication, @RequestBody Long teamId) {
+    public ResponseEntity<MessageOnly> acceptTeam(Authentication authentication, @PathVariable Long teamId) {
         teamService.acceptTeam(UUID.fromString(authentication.getName()), teamId);
         return new ResponseEntity<>(new MessageOnly("팀 초대 수락이 성공하였습니다."), HttpStatus.OK);
     }
