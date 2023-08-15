@@ -35,7 +35,7 @@ public class PlanController {
         return new ResponseEntity<>(new MessageWithData(("가입한 모든 그룹의 일정을 가져왔습니다."), data), HttpStatus.OK);
     }
 
-    @GetMapping("/{teamId}")
+    @GetMapping("/team/{teamId}")
     @Operation(summary = "팀 일정 조회", description = "팀의 일정 조회 요청 API 입니다.")
     public ResponseEntity<MessageWithData> getAllTeamPlans(@PathVariable Long teamId) {
         List<PlanResponseDto> data = planService.getAllTeamPlans(teamId);
