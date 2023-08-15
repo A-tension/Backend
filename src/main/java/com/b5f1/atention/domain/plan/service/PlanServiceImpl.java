@@ -153,6 +153,7 @@ public class PlanServiceImpl implements PlanService{
                 .name(plan.getName())
                 .startTime(plan.getStartTime())
                 .endTime(plan.getEndTime())
+                .teamId(plan.getTeamId())
                 .description(plan.getDescription())
                 .build();
     }
