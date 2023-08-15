@@ -18,4 +18,6 @@ public class TeamCreateRequestDto {
     private String name;
     // 초대 할 유저 ID List
     private List<UUID> userIdList;
+    // 팀 소개
+    private String description;
 }

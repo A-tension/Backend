@@ -56,6 +56,7 @@ public class TeamServiceImpl implements TeamService {
     public void createTeam(UUID userId, TeamCreateRequestDto teamCreateRequestDto) {
         Team team = Team.builder()
                 .name(teamCreateRequestDto.getName())
+                .description(teamCreateRequestDto.getDescription())
                 .build();
         teamRepository.save(team);
 

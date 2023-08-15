@@ -74,8 +74,12 @@ public class User extends BaseEntity {
     }
 
     public User updateUser(UserProfileUpdateDto userProfileUpdateDto) {
-        this.name = userProfileUpdateDto.getName();
-        this.profileImage = userProfileUpdateDto.getProfileImage();
+        if (userProfileUpdateDto.getName() != null)
+            this.name = userProfileUpdateDto.getName();
+        if (userProfileUpdateDto.getProfileImage() != null)
+            this.profileImage = userProfileUpdateDto.getProfileImage();
+        if (userProfileUpdateDto.getMeetingUrl() != null)
+            this.meetingUrl = userProfileUpdateDto.getMeetingUrl();
         return this;
     }
 }

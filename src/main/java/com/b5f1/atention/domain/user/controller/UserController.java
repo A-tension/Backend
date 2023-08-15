@@ -4,6 +4,7 @@ import com.b5f1.atention.common.MessageOnly;
 import com.b5f1.atention.common.MessageWithData;
 import com.b5f1.atention.domain.user.dto.UserProfileUpdateDto;
 import com.b5f1.atention.domain.user.dto.UserResponseDto;
+import com.b5f1.atention.domain.user.dto.UserSearchResponseDto;
 import com.b5f1.atention.domain.user.repository.UserRepository;
 import com.b5f1.atention.domain.user.service.UserService;
 import com.b5f1.atention.entity.User;
@@ -39,7 +40,7 @@ public class UserController {
 
     @PutMapping
     @Operation(summary = "내 정보 수정", description = "내 정보 수정 요청 API 입니다.")
-    public ResponseEntity<MessageWithData> updateUserProfile(Authentication authentication, UserProfileUpdateDto userProfileUpdateDto) {
+    public ResponseEntity<MessageWithData> updateUserProfile(Authentication authentication, @RequestBody UserProfileUpdateDto userProfileUpdateDto) {
         UserResponseDto data = userService.updateUserProfile(UUID.fromString(authentication.getName()), userProfileUpdateDto);
         return new ResponseEntity<>(new MessageWithData("내 정보 변경이 성공하였습니다.", data), HttpStatus.OK);
     }
@@ -49,6 +50,13 @@ public class UserController {
     public ResponseEntity<MessageOnly> deleteUser(Authentication authentication) {
         userService.deleteUser(UUID.fromString(authentication.getName()));
         return new ResponseEntity<>(new MessageOnly("유저 탈퇴가 성공하였습니다."), HttpStatus.OK);
+    }
+
+    @GetMapping("/{keyword}")
+    @Operation(summary = "회원 검색", description = "회원 검색 요청 API 입니다.")
+    public ResponseEntity<MessageWithData> searchUser(@PathVariable String keyword) {
+        List<UserSearchResponseDto> userSearchResponseDtoList = userService.searchUser(keyword);
+        return new ResponseEntity<>(new MessageWithData("유저 검색에 성공하였습니다.", userSearchResponseDtoList), HttpStatus.OK);
     }
 
     @GetMapping("/test")
