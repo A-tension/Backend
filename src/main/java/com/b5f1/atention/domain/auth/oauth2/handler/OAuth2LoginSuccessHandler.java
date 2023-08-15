@@ -46,6 +46,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:5173/oauth2/redirect")
                 .queryParam("accessToken", accessToken)
                 .queryParam("refreshToken", refreshToken)
+                .queryParam("uid", oAuth2User.getId().toString())
                 .build().toUriString();
         redirectStratgy.sendRedirect(request, response, targetUrl);
     }
