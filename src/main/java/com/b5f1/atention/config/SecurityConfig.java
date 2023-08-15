@@ -104,7 +104,7 @@ public class SecurityConfig { // WebSecurityConfigurerAdapter : Spring Security 
         CorsConfiguration configuration = new CorsConfiguration();
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         configuration.setAllowCredentials(true); // axios에서 withCredentials:true로 설정한 경우 필수
-        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOriginPattern("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setMaxAge(3600L);
