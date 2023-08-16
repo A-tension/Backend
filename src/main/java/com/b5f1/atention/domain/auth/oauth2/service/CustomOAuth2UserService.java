@@ -6,8 +6,11 @@ import com.b5f1.atention.domain.auth.oauth2.OAuthAttributes;
 import com.b5f1.atention.domain.user.repository.UserRepository;
 import com.b5f1.atention.entity.User;
 import com.b5f1.atention.entity.enums.SocialType;
+import io.openvidu.java.client.*;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -15,6 +18,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Base64Utils;
 
 import java.util.Collections;
 import java.util.Map;
@@ -22,6 +26,7 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@Getter
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
@@ -30,6 +35,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private static final String NAVER = "naver";
     private static final String KAKAO = "kakao";
+
+    @Value("${openvidu.serverUrl}")
+    private String OPENVIDU_URL;
+    @Value("${openvidu.serverSecret}")
+    private String OPENVIDU_SECRET;
+    @Value("${openvidu.meetingUrl}")
+    private String BASE_MEETING_URL;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -92,6 +104,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private User saveUser(OAuthAttributes attributes, SocialType socialType) {
         attributes.setId(UUID.randomUUID());
+        try {
+            OpenVidu openVidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
+            SessionProperties properties = new SessionProperties.Builder().build();
+            Session session = openVidu.createSession(properties);
+            //sessionId를 base64 인코딩
+            String encodedSeesionId = Base64Utils.encodeToString(session.getSessionId().getBytes());
+            //개인 미팅 URL 생성
+            String personalMeetingUrl = BASE_MEETING_URL+encodedSeesionId;
+            attributes.setMeetingUrl(personalMeetingUrl);
+        } catch (OpenViduJavaClientException e) {
+            throw new RuntimeException(e);
+        } catch (OpenViduHttpException e) {
+            throw new RuntimeException(e);
+        }
         User createdUser = attributes.toEntity(socialType, attributes);
         return userRepository.save(createdUser);
     }
