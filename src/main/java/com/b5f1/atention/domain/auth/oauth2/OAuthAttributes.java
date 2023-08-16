@@ -18,6 +18,7 @@ public class OAuthAttributes {
     private OAuth2UserInfo oauth2UserInfo; // 소셜 타입별 로그인 유저 정보(닉네임, 이메일, 프로필 사진 등등)
     private UUID id;
     private String refreshToken;
+    private String meetingUrl;
     @Builder
     public OAuthAttributes(OAuth2UserInfo oauth2UserInfo) {
         this.oauth2UserInfo = oauth2UserInfo;
@@ -71,7 +72,7 @@ public class OAuthAttributes {
                 .email(oAuthAttributes.getOauth2UserInfo().getEmail())
                 .name(oAuthAttributes.getOauth2UserInfo().getName())
                 .profileImage(oAuthAttributes.getOauth2UserInfo().getProfileImage())
-                .meetingUrl("")
+                .meetingUrl(oAuthAttributes.getMeetingUrl())
                 .socialType(socialType)
                 .socialId(oAuthAttributes.getOauth2UserInfo().getSocialId())
                 .build();
@@ -84,4 +85,6 @@ public class OAuthAttributes {
     public void setRefreshToken(String refreshToken){
         this.refreshToken = refreshToken;
     }
+
+    public void setMeetingUrl(String meetingUrl){ this.meetingUrl = meetingUrl; }
 }
