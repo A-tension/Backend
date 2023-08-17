@@ -66,7 +66,7 @@ public class SecurityConfig { // WebSecurityConfigurerAdapter : Spring Security 
                 .antMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
                 // 회원가입 접근 가능 자체 회원 가입이 없으니 빼도 될 거 같음
                 .antMatchers("/login/**", "/oauth2/**").permitAll()
-                .antMatchers("user/**").permitAll()
+                .antMatchers("/user/**").permitAll()
                 //Swagger URL 허용
                 .antMatchers(swaggerPatterns).permitAll()
                 // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
