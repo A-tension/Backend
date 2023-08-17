@@ -1,5 +1,9 @@
 server:
   port: 8080
+  tomcat:
+    remoteip:
+      remote-ip-header: X-Forwarded-For
+      protocol-header: X-Forwarded-Proto
   forward-headers-strategy: framework
 #  ssl:
 #    enabled: true
