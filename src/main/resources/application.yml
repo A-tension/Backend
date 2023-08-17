@@ -1,6 +1,12 @@
 server:
   port: 8080
   forward-headers-strategy: framework
+#  ssl:
+#    enabled: true
+#    key-store: keystore.p12
+#    key-store-password: ${DB_PWD}
+#    key-store-type: PKCS12
+#    key-alias: spring
 
 spring:
   config:
@@ -104,6 +110,9 @@ jwt:
   refresh:
     expiration: 1209600000 #  ms -> 2주
     header: Authorization-refresh
+
+  redirect:
+    ${REACT_REDIRECT}
 
 openvidu:
   meetingUrl: ${MEETING_URL}

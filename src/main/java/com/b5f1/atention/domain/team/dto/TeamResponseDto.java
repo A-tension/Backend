@@ -19,6 +19,8 @@ public class TeamResponseDto {
     private String name;
     // 팀 프로필 이미지 링크
     private String profileImage;
+    // 팀 description
+    private String description;
 
 
     // Team -> TeamResponseDto 변환
@@ -27,6 +29,7 @@ public class TeamResponseDto {
                 .teamId(team.getId())
                 .name(team.getName())
                 .profileImage(team.getProfileImage())
+                .description(team.getDescription())
                 .build();
     }
 }

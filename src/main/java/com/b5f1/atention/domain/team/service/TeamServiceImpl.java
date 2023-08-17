@@ -56,6 +56,7 @@ public class TeamServiceImpl implements TeamService {
     public void createTeam(UUID userId, TeamCreateRequestDto teamCreateRequestDto) {
         Team team = Team.builder()
                 .name(teamCreateRequestDto.getName())
+                .description(teamCreateRequestDto.getDescription())
                 .build();
         teamRepository.save(team);
 
@@ -63,7 +64,12 @@ public class TeamServiceImpl implements TeamService {
         User hostUser = findUserById(userId);
         teamParticipantRepository.save(new TeamParticipant().createTeamParticipant(hostUser, team, true));
 
-        inviteUser(userId, team, teamCreateRequestDto);
+        // 강제 초대로 로직 변경
+        for (UUID invitedUserId : teamCreateRequestDto.getUserIdList()) {
+            User invitedUser = findUserById(invitedUserId);
+            teamParticipantRepository.save(new TeamParticipant().createTeamParticipant(invitedUser, team, false));
+        }
+//        inviteUser(userId, team, teamCreateRequestDto);
     }
 
     /**

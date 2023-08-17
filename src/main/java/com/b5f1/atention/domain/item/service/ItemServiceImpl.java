@@ -110,8 +110,10 @@ public class ItemServiceImpl implements ItemService {
         for (MyItem myItem : myItemList) {
             // 전체 아이템에서 내가 가진 아이템 번호만 제거
             Long itemTypeId = myItem.getItem().getItemType().getId();
-            if (itemTypeId != 1L && itemTypeId != 2L) {
-                allItemSet.remove(itemTypeId);
+            // 이모지나 색상권이면
+            if (itemTypeId == 3L || itemTypeId == 4L) {
+                // 전체 아이템set에서 가지고 있는 아이템을 제거 (해당 이모지나 색상권은 안뽑게)
+                allItemSet.remove(myItem.getId());
             }
         }
         // 랜덤 숫자
@@ -136,6 +138,9 @@ public class ItemServiceImpl implements ItemService {
         return CreateMyItemResponseDto.builder()
                 .name(newItem.getName())
                 .image(newItem.getImage())
+                .itemTypeId(newItem.getItemType().getId())
+                .itemTypeName(newItem.getItemType().getName())
+                .description(newItem.getItemType().getDescription())
                 .build();
     }
 

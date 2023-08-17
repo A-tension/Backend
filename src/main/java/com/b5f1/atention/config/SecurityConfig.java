@@ -40,7 +40,7 @@ public class SecurityConfig { // WebSecurityConfigurerAdapter : Spring Security 
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 //Spring Security 전에 선행되는 CorsFilter를 Security에 통합
-                .cors()
+                .cors().configurationSource(corsConfigurationSource())
                 .and()
                 // HTML <form>을 통해 아이디 비밀번호를 제공하여 로그인하는 방식이 아니므로 disable
                 .formLogin().disable() // FormLogin 사용 X
@@ -66,8 +66,8 @@ public class SecurityConfig { // WebSecurityConfigurerAdapter : Spring Security 
                 .antMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
                 // 회원가입 접근 가능 자체 회원 가입이 없으니 빼도 될 거 같음
                 .antMatchers("/login/**", "/oauth2/**").permitAll()
+                .antMatchers("/api/**").permitAll()
                 //Swagger URL 허용
-                .antMatchers("/user/**").permitAll()
                 .antMatchers(swaggerPatterns).permitAll()
                 // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
                 .anyRequest().authenticated()

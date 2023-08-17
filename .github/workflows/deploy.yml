@@ -18,13 +18,19 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '11'
-          distribution: 'openJDK'
+          distribution: 'temurin'
 
         # Grant gradlew Permission
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
         # Gradle Build With Test
+      - name: create env file
+        run: touch .env
+        
+      - name: env setting
+        run: echo "${{ secrets.ENV }}" >> .env
+
       - name: Build with Gradle
         run: ./gradlew build
 
