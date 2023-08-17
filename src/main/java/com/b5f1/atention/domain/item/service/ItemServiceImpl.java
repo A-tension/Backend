@@ -138,6 +138,9 @@ public class ItemServiceImpl implements ItemService {
         return CreateMyItemResponseDto.builder()
                 .name(newItem.getName())
                 .image(newItem.getImage())
+                .itemTypeId(newItem.getItemType().getId())
+                .itemTypeName(newItem.getItemType().getName())
+                .description(newItem.getItemType().getDescription())
                 .build();
     }
 
