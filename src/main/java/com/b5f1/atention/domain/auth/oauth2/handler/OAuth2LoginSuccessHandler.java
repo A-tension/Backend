@@ -4,6 +4,7 @@ import com.b5f1.atention.domain.auth.jwt.JwtService;
 import com.b5f1.atention.domain.auth.oauth2.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
@@ -23,6 +24,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
     private final RedirectStrategy redirectStratgy = new DefaultRedirectStrategy();
+
+    @Value("${jwt.redirect}")
+    private String REACT_REDIRECT;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -43,7 +47,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = jwtService.createAccessToken(oAuth2User.getId());
         String refreshToken = jwtService.createRefreshToken(oAuth2User.getId());
         jwtService.updateRefreshToken(oAuth2User.getId(), refreshToken);
-        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:5173/oauth2/redirect")
+        String targetUrl = UriComponentsBuilder.fromUriString(REACT_REDIRECT)
                 .queryParam("accessToken", accessToken)
                 .queryParam("refreshToken", refreshToken)
                 .build().toUriString();
