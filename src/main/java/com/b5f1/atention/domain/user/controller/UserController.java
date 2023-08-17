@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 @Api(tags = "유저")
 @RequiredArgsConstructor
 public class UserController {
