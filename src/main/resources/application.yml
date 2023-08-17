@@ -110,6 +110,9 @@ jwt:
     expiration: 1209600000 #  ms -> 2주
     header: Authorization-refresh
 
+  redirect:
+    ${REACT_REDIRECT}
+
 openvidu:
   meetingUrl: ${MEETING_URL}
 
