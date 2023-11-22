@@ -77,11 +77,14 @@
 > 발표자는 실시간으로 참여자들의 집중도와 분위기를 확인할 수 있습니다.  <br>
 <img src="https://user-images.githubusercontent.com/87440708/284823195-fbe4dc43-c67f-45df-9986-72df0245861e.svg"  width="759" height="130"/>
 
+> 집중 유도를 위해 클릭 게임을 제공합니다.  <br>
+<img src="https://user-images.githubusercontent.com/87440708/284831033-91cc185e-5587-41dc-bf9b-af2d0615f98a.svg"  width="724" height="629"/>
+
 
 **스트레칭**
 
 > 발표자는 실시간으로 참여자들의 집중도와 분위기를 확인할 수 있습니다.  <br>
-<img src="https://user-images.githubusercontent.com/87440708/284823195-fbe4dc43-c67f-45df-9986-72df0245861e.svg"  width="759" height="130"/>
+<img src="https://user-images.githubusercontent.com/87440708/284830745-4dd0d2f1-283a-44cd-8db7-97d12c766deb.svg"  width="300" height="300"/>
 
 
 **아이템**
