@@ -1,6 +1,6 @@
 <!-- 대문 이미지 넣기  -->
 
-![대문사진]()
+![대문사진](https://user-images.githubusercontent.com/87440708/284770270-836b142b-95ee-4274-8196-ab9089ace678.svg)
 
 # A:tension
 
