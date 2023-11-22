@@ -4,13 +4,13 @@
 
 # A:tension
 
-> 사용자들의 집중을 도와주는 화상회의 플랫폼 <br>
+> 얼굴 인식 알고리즘과 OpenVidu를 활용한 WebRTC기반 실시간 화상회의 플랫폼입니다. <br>
 
 
 ## ✈️ 프로젝트 소개
 
-얼굴 인식 알고리즘과 OpenVidu를 활용한 WebRTC기반 실시간 화상회의 플랫폼입니다.
-화상회의에 참여한 사용자들의 얼굴을 실시간으로 모니터링하여 표정 인식 알고리즘과 얼굴 각도 계산 알고리즘을 통해 화상회의 청자들의 집중도를 분석후 발표자에게 전달합니다.
+<img src="https://user-images.githubusercontent.com/87440708/284820022-f01205c1-18bd-412b-856e-167bc4dc013d.svg"  width="960" height="540"/>
+
 
 <br>
 
@@ -36,9 +36,9 @@
 ## 📌 기술 스택
 
 &nbsp;&nbsp;&nbsp;&nbsp; **🛠 Frontend Develop** <br>
-
 <img src="https://img.shields.io/badge/typescript-%23007ACC?style=for-the-badge&logo=typescript&logoColor=white">
-
+<img src="https://img.shields.io/badge/react-%23007ACC?style=for-the-badge&logo=react&color=61DAFB&logoColor=white">
+<img src="https://img.shields.io/badge/redux-%23007ACC?style=for-the-badge&logo=redux&color=764ABC&logoColor=white">
 <img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white">
 
 &nbsp;&nbsp;&nbsp;&nbsp; **🛠 Backend Develop** <br>
@@ -65,10 +65,64 @@
 <br>
 
 ## 🛠️︎ 시스템 아키텍쳐
-
-![Architecture](https://user-images.githubusercontent.com/87440708/284811663-2817d53d-4d0f-44ef-aaca-ad5f733eca97.svg)
+<img src="https://user-images.githubusercontent.com/87440708/284820027-0a5e3661-59c9-4d60-87f2-69fefe2368cb.svg"  width="720" height="405"/>
 
 ## 📌 주요 기능
-
 **화상 회의**
+
+> 회의 입장! <br>
+<img src="https://user-images.githubusercontent.com/87440708/284823184-3e0de395-ff8c-4a6a-8e73-461ad1cbe6fc.svg"  width="540" height="303.75"/>
+
+> 발표자는 실시간으로 참여자들의 집중도와 분위기를 확인할 수 있습니다.  <br>
+<img src="https://user-images.githubusercontent.com/87440708/284823195-fbe4dc43-c67f-45df-9986-72df0245861e.svg"  width="759" height="130"/>
+
+
+**스트레칭**
+
+> 발표자는 실시간으로 참여자들의 집중도와 분위기를 확인할 수 있습니다.  <br>
+<img src="https://user-images.githubusercontent.com/87440708/284823195-fbe4dc43-c67f-45df-9986-72df0245861e.svg"  width="759" height="130"/>
+
+
+**아이템**
+
+> 다양한 아이템을 뽑을 수 있습니다. <br>
+<img src="https://user-images.githubusercontent.com/87440708/284826227-a773ee45-a767-4cd4-80ff-4fe13230050d.svg"  width="368" height="280"/>
+
+> 이모티콘 <br>
+<img src="https://user-images.githubusercontent.com/87440708/284827055-0cbd85d7-2607-44a2-9abd-9fceda18b303.svg"  width="150" height="150"/>
+
+> 글자 색상변경권 <br>
+<img src="https://user-images.githubusercontent.com/87440708/284827045-c7860b5e-cc85-4082-9455-3e47a183cc4d.svg"  width="150" height="150"/>
+
+> 발표자 지목권 <br>
+<img src="https://user-images.githubusercontent.com/87440708/284827052-0eccbc7d-4ff5-4ff9-afe9-0d3f4bdc7381.svg"  width="150" height="150"/>
+
+> 발표 면제권 <br>
+<img src="https://user-images.githubusercontent.com/87440708/284827041-330c67b2-9908-4fb6-abb7-511a1be5e10d.svg"  width="150" height="150"/>
+
+> 본인의 아이템을 확인할 수 있습니다. <br>
+<img src="https://user-images.githubusercontent.com/87440708/284826724-e32b0915-58dc-4b70-acd9-d4cae1187f30.svg"  width="585" height="254"/>
+
+**QUIZ**
+
+> 익명으로 질문할 수 있습니다.  <br>
+<img src="https://user-images.githubusercontent.com/87440708/284827982-4081c504-abf6-4a49-b13b-179443e34ec0.svg"  width="333" height="102"/>
+
+> OX 퀴즈 / 4지선다 퀴즈를 낼 수 있습니다.  <br>
+<img src="https://user-images.githubusercontent.com/87440708/284827988-dc6ed86f-5947-4a78-a183-452dfd2265e3.svg"  width="472.5" height="292"/>
+
+
+
+**관리**
+
+> 그룹 단위로 회의를 관리할 수 있습니다.  <br>
+<img src="https://user-images.githubusercontent.com/87440708/284823193-7ce5ced4-1d89-48cb-b879-06e888a95450.svg"  width="720" height="405"/>
+
+> 캘린더 단위로 그룹 및 개인 일정을 편리하게 관리할 수 있습니다.  <br>
+<img src="https://user-images.githubusercontent.com/87440708/284823190-0d77a42c-5849-46a0-bdcf-d9071e785412.svg"  width="720" height="405"/>
+
+
+
+
+
 
