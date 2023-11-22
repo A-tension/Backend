@@ -1,7 +1,7 @@
 <!-- 대문 이미지 넣기  -->
 
 ![대문사진](https://user-images.githubusercontent.com/87440708/284770270-836b142b-95ee-4274-8196-ab9089ace678.svg)
-
+(https://user-images.githubusercontent.com/87440708/284770265-8c1d3c29-90fc-4c58-af33-fcb81300a735.svg)
 # A:tension
 
 > 사용자들의 집중을 도와주는 화상회의 플랫폼 <br>
