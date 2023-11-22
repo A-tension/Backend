@@ -85,22 +85,9 @@
 
 **아이템**
 
-> 다양한 아이템을 뽑을 수 있습니다. <br>
+> 다양한 아이템을 뽑고 확인할 수 있습니다. <br>
 <img src="https://user-images.githubusercontent.com/87440708/284826227-a773ee45-a767-4cd4-80ff-4fe13230050d.svg"  width="368" height="280"/>
 
-> 이모티콘 <br>
-<img src="https://user-images.githubusercontent.com/87440708/284827055-0cbd85d7-2607-44a2-9abd-9fceda18b303.svg"  width="150" height="150"/>
-
-> 글자 색상변경권 <br>
-<img src="https://user-images.githubusercontent.com/87440708/284827045-c7860b5e-cc85-4082-9455-3e47a183cc4d.svg"  width="150" height="150"/>
-
-> 발표자 지목권 <br>
-<img src="https://user-images.githubusercontent.com/87440708/284827052-0eccbc7d-4ff5-4ff9-afe9-0d3f4bdc7381.svg"  width="150" height="150"/>
-
-> 발표 면제권 <br>
-<img src="https://user-images.githubusercontent.com/87440708/284827041-330c67b2-9908-4fb6-abb7-511a1be5e10d.svg"  width="150" height="150"/>
-
-> 본인의 아이템을 확인할 수 있습니다. <br>
 <img src="https://user-images.githubusercontent.com/87440708/284826724-e32b0915-58dc-4b70-acd9-d4cae1187f30.svg"  width="585" height="254"/>
 
 **QUIZ**
