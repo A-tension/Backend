@@ -65,7 +65,7 @@
 <br>
 
 ## 🛠️︎ 시스템 아키텍쳐
-<img src="https://user-images.githubusercontent.com/87440708/284820027-0a5e3661-59c9-4d60-87f2-69fefe2368cb.svg"  width="720" height="405"/>
+<img src="https://user-images.githubusercontent.com/87440708/284811663-2817d53d-4d0f-44ef-aaca-ad5f733eca97.svg"  width="812" height="386.5"/>
 
 ## 📌 주요 기능
 **화상 회의**
