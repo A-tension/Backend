@@ -10,7 +10,7 @@
 
 ## ✈️ 프로젝트 소개
 
-<img src="https://user-images.githubusercontent.com/87440708/284820022-f01205c1-18bd-412b-856e-167bc4dc013d.svg"  width="960" height="540"/>
+<img src="https://user-images.githubusercontent.com/87440708/284820022-f01205c1-18bd-412b-856e-167bc4dc013d.svg"  width="720" height="405"/>
 
 
 <br>
